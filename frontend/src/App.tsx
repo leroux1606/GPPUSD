@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
 import { Navbar } from './components/Common/Navbar';
@@ -30,12 +30,14 @@ import { DrawdownChart } from './components/Backtesting/DrawdownChart';
 import { IndicatorHelp } from './components/Charts/IndicatorHelp';
 import { EconomicCalendar } from './components/Dashboard/EconomicCalendar';
 import { useStrategyStore } from './store';
+import { useTradingStore } from './store/tradingStore';
+import { BacktestResult } from './types';
 import './App.css';
 
 function Dashboard() {
   return (
     <div className="dashboard">
-      <header>
+      <header className="dashboard-header">
         <h1>GBP/USD Trading Dashboard</h1>
         <PriceTicker />
       </header>
@@ -57,7 +59,7 @@ function Dashboard() {
 function Charts() {
   return (
     <div className="charts-page">
-      <h2>Price Charts & Indicators</h2>
+      <h2>Price Charts & Technical Analysis</h2>
       <div className="charts-layout">
         <div className="main-chart">
           <MultiChart />
@@ -72,18 +74,24 @@ function Charts() {
 }
 
 function Backtesting() {
-  const [backtestResults, setBacktestResults] = React.useState<any>(null);
+  const [backtestResults, setBacktestResults] = useState<BacktestResult | null>(null);
 
   return (
     <div className="backtesting-page">
-      <h2>Backtesting</h2>
+      <h2>Strategy Backtesting</h2>
       <BacktestPanel onResultsChange={setBacktestResults} />
       {backtestResults && (
         <>
           <PerformanceMetricsDisplay metrics={backtestResults} />
           <div className="backtest-charts">
-            <EquityCurve equityCurve={backtestResults.equity_curve || []} />
-            <DrawdownChart equityCurve={backtestResults.equity_curve || []} />
+            <EquityCurve 
+              equityCurve={backtestResults.equity_curve || []} 
+              timestamps={backtestResults.timestamps}
+            />
+            <DrawdownChart 
+              equityCurve={backtestResults.equity_curve || []}
+              timestamps={backtestResults.timestamps}
+            />
           </div>
           <TradeList trades={backtestResults.trades || []} />
         </>
@@ -95,7 +103,7 @@ function Backtesting() {
 function Trading() {
   return (
     <div className="trading-page">
-      <h2>Trading</h2>
+      <h2>Trading Terminal</h2>
       <div className="trading-layout">
         <div className="trading-left">
           <QuickTrade />
@@ -118,22 +126,34 @@ function Strategies() {
 
   return (
     <div className="strategies-page">
-      <h2>Strategies</h2>
+      <h2>Trading Strategies</h2>
       <div className="strategy-tabs">
-        <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>
-          Strategy List
+        <button 
+          className={view === 'list' ? 'active' : ''} 
+          onClick={() => setView('list')}
+        >
+          📋 Strategy List
         </button>
-        <button className={view === 'builder' ? 'active' : ''} onClick={() => setView('builder')}>
-          Visual Builder
+        <button 
+          className={view === 'builder' ? 'active' : ''} 
+          onClick={() => setView('builder')}
+        >
+          🔧 Visual Builder
         </button>
-        <button className={view === 'comparison' ? 'active' : ''} onClick={() => setView('comparison')}>
-          Compare Strategies
+        <button 
+          className={view === 'comparison' ? 'active' : ''} 
+          onClick={() => setView('comparison')}
+        >
+          📊 Compare Strategies
         </button>
-        <button className={view === 'optimizer' ? 'active' : ''} onClick={() => setView('optimizer')}>
-          Optimize Parameters
+        <button 
+          className={view === 'optimizer' ? 'active' : ''} 
+          onClick={() => setView('optimizer')}
+        >
+          ⚡ Optimize Parameters
         </button>
       </div>
-      
+
       {view === 'list' && (
         <div className="strategies-layout">
           <div className="strategies-left">
@@ -146,12 +166,14 @@ function Strategies() {
                 <StrategyExplanation strategyType={selectedStrategy.type} />
               </>
             ) : (
-              <div>Select a strategy to view details</div>
+              <div className="no-selection-message">
+                <p>Select a strategy to view details and configure parameters</p>
+              </div>
             )}
           </div>
         </div>
       )}
-      
+
       {view === 'builder' && <StrategyBuilder />}
       {view === 'comparison' && <StrategyComparison strategies={strategies} />}
       {view === 'optimizer' && <ParameterOptimizer strategy={selectedStrategy} />}
@@ -160,12 +182,21 @@ function Strategies() {
 }
 
 function Analytics() {
+  const { closedTrades, positions } = useTradingStore();
+  
+  // Combine closed trades with closed positions
+  const allTrades = [
+    ...closedTrades,
+    ...positions.filter(p => p.status === 'closed')
+  ];
+
   return (
     <div className="analytics-page">
-      <AnalyticsDashboard />
+      <h2>Performance Analytics</h2>
+      <AnalyticsDashboard trades={allTrades} />
       <div className="analytics-charts">
-        <MonthlyReturns trades={[]} />
-        <TradeDistribution trades={[]} />
+        <MonthlyReturns trades={allTrades} />
+        <TradeDistribution trades={allTrades} />
       </div>
     </div>
   );

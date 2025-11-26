@@ -1,0 +1,20 @@
+# Quick GitHub Publishing Commands
+
+Run these commands to publish to GitHub:
+
+```bash
+# 1. Create repository on GitHub first at: https://github.com/new
+#    Name: gbpusd-trading-app (or your choice)
+#    Don't initialize with README/gitignore/license
+
+# 2. Add remote (replace with your actual repo name if different)
+git remote add origin https://github.com/leroux1606/gbpusd-trading-app.git
+
+# 3. Push to GitHub
+git push -u origin main
+```
+
+If you get authentication errors, you may need to:
+- Use GitHub CLI: `gh auth login`
+- Or use SSH: `git remote set-url origin git@github.com:leroux1606/gbpusd-trading-app.git`
+
