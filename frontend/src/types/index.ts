@@ -129,7 +129,7 @@ export interface BacktestResult {
 // Performance Metrics Types
 export interface PerformanceMetrics {
   total_return: number;
-  annual_return: number;
+  annual_return?: number;
   sharpe_ratio: number;
   sortino_ratio: number;
   calmar_ratio: number;
@@ -224,4 +224,77 @@ export interface MonthlyReturn {
   month: number;
   return_pct: number;
   trades: number;
+}
+
+// Live Signal Types
+export interface LiveSignal {
+  id: string;
+  pair?: string;
+  pair_display?: string;
+  strategy: string;
+  strategies?: string[];
+  direction: 'buy' | 'sell';
+  timestamp: string;
+  entry: number;
+  stop_loss: number;
+  take_profit: number;
+  risk_pips: number;
+  reward_pips: number;
+  rr_ratio: number;
+  suggested_lot: number;
+  atr_pips?: number;
+  confluence?: boolean;
+  confidence?: number;
+  comment?: string;
+  ai_analysis?: string;
+}
+
+// Notification Types
+export type NotificationPriority = 'info' | 'opportunity' | 'warning' | 'danger';
+
+export interface AppNotification {
+  id: string;
+  type: NotificationPriority;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  signal?: LiveSignal;
+}
+
+// Market Context
+export interface MarketContext {
+  price: number;
+  session: string;
+  daily_high: number;
+  daily_low: number;
+  atr_pips: number;
+  rsi: number;
+  trend: string;
+  range_position: string;
+  signals: LiveSignal[];
+  pair?: string;
+  display?: string;
+}
+
+// Settings
+export interface NotificationSettingsData {
+  telegram_bot_token?: string;
+  telegram_chat_id?: string;
+  telegram_min_priority?: string;
+  openrouter_api_key?: string;
+  openrouter_model?: string;
+  active_strategies?: string;
+  signal_scan_interval?: number;
+  risk_per_trade_pct?: number;
+}
+
+export interface SettingsStatus {
+  telegram_configured: boolean;
+  ai_configured: boolean;
+  telegram_chat_id: string;
+  openrouter_model: string;
+  active_strategies: string;
+  signal_scan_interval: number;
+  risk_per_trade_pct: number;
+  telegram_min_priority: string;
 }

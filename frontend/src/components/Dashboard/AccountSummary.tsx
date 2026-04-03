@@ -15,31 +15,31 @@ export function AccountSummary() {
       <div className="metrics">
         <div className="metric">
           <label>Balance</label>
-          <value>{formatCurrency(balance)}</value>
+          <span>{formatCurrency(balance)}</span>
         </div>
         <div className="metric">
           <label>Equity</label>
-          <value className={pnl >= 0 ? 'positive' : 'negative'}>
+          <span className={pnl >= 0 ? 'positive' : 'negative'}>
             {formatCurrency(equity)}
-          </value>
+          </span>
         </div>
         <div className="metric">
           <label>Margin</label>
-          <value>{formatCurrency(margin)}</value>
+          <span>{formatCurrency(margin)}</span>
         </div>
         <div className="metric">
           <label>Free Margin</label>
-          <value>{formatCurrency(freeMargin)}</value>
+          <span>{formatCurrency(freeMargin)}</span>
         </div>
         <div className="metric">
           <label>Margin Level</label>
-          <value>{formatPercentage(marginLevel)}</value>
+          <span>{formatPercentage(marginLevel)}</span>
         </div>
         <div className="metric">
           <label>P&L</label>
-          <value className={pnl >= 0 ? 'positive' : 'negative'}>
+          <span className={pnl >= 0 ? 'positive' : 'negative'}>
             {formatCurrency(pnl)}
-          </value>
+          </span>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ class RSIDivergenceStrategy(BaseStrategy):
         return {
             "rsi_period": 14,
             "lookback": 20,
-            "min_divergence_strength": 0.5
+            "min_divergence_strength": 0.05  # RSI difference of 5 points (was 50, never triggered)
         }
     
     def generate_signals(self, df: pd.DataFrame) -> pd.Series:

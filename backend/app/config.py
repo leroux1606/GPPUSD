@@ -2,7 +2,7 @@
 
 from typing import List
 from pydantic_settings import BaseSettings
-from pydantic import Field, validator
+from pydantic import Field, field_validator, model_validator
 import os
 
 
@@ -83,22 +83,64 @@ class Settings(BaseSettings):
         description="Maximum daily loss limit"
     )
     
+    # AI Advisor (OpenRouter)
+    OPENROUTER_API_KEY: str = Field(
+        default="",
+        description="OpenRouter API key for AI commentary"
+    )
+    OPENROUTER_MODEL: str = Field(
+        default="anthropic/claude-3-haiku",
+        description="OpenRouter model to use for AI advice"
+    )
+
+    # Telegram Notifications
+    TELEGRAM_BOT_TOKEN: str = Field(
+        default="",
+        description="Telegram bot token from @BotFather"
+    )
+    TELEGRAM_CHAT_ID: str = Field(
+        default="",
+        description="Your Telegram chat ID (use @userinfobot to find it)"
+    )
+    TELEGRAM_MIN_PRIORITY: str = Field(
+        default="opportunity",
+        description="Minimum priority for Telegram: 'info', 'opportunity', 'warning'"
+    )
+
+    # Signal Engine
+    SIGNAL_SCAN_INTERVAL: int = Field(
+        default=30,
+        description="How often (seconds) to scan for new signals"
+    )
+    ACTIVE_PAIRS: str = Field(
+        default="GBP_USD,EUR_USD,USD_JPY,USD_CHF,AUD_USD,USD_CAD",
+        description="Comma-separated list of pairs to scan for signals"
+    )
+    ACTIVE_STRATEGIES: str = Field(
+        default="asian_range_breakout,session_breakout,triple_screen",
+        description="Fallback strategies if a pair has no specific config"
+    )
+    DEFAULT_RISK_PER_TRADE_PCT: float = Field(
+        default=1.0,
+        description="Default % of balance to risk per trade"
+    )
+
     # API Settings
     API_V1_PREFIX: str = "/api/v1"
     
-    @validator("LOG_LEVEL")
+    @field_validator("LOG_LEVEL")
+    @classmethod
     def validate_log_level(cls, v: str) -> str:
-        """Validate log level."""
         valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         if v.upper() not in valid_levels:
             raise ValueError(f"LOG_LEVEL must be one of {valid_levels}")
         return v.upper()
-    
-    @validator("OANDA_API_KEY", "OANDA_ACCOUNT_ID")
-    def validate_oanda_credentials(cls, v: str, field) -> str:
-        """Validate OANDA credentials are set in production."""
+
+    @field_validator("OANDA_API_KEY", "OANDA_ACCOUNT_ID")
+    @classmethod
+    def validate_oanda_credentials(cls, v: str) -> str:
         if os.getenv("APP_ENV") == "production" and not v:
-            raise ValueError(f"{field.name} is required in production")
+            raise ValueError("OANDA credentials are required in production")
         return v
     
     @property
@@ -106,11 +148,11 @@ class Settings(BaseSettings):
         """Get CORS origins as a list."""
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
     
-    class Config:
-        """Pydantic config."""
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True,
+    }
 
 
 # Global settings instance

@@ -1,9 +1,9 @@
 import React from 'react';
-import { PerformanceMetrics } from '../../types';
+import { PerformanceMetrics, BacktestResult } from '../../types';
 import { formatPercentage, formatCurrency } from '../../utils/formatters';
 
 interface PerformanceMetricsProps {
-  metrics: PerformanceMetrics;
+  metrics: PerformanceMetrics | BacktestResult;
 }
 
 export function PerformanceMetricsDisplay({ metrics }: PerformanceMetricsProps) {
@@ -13,65 +13,65 @@ export function PerformanceMetricsDisplay({ metrics }: PerformanceMetricsProps) 
       <div className="metrics-grid">
         <div className="metric-card">
           <label>Total Return</label>
-          <value className={metrics.total_return >= 0 ? 'positive' : 'negative'}>
+          <span className={metrics.total_return >= 0 ? 'positive' : 'negative'}>
             {formatPercentage(metrics.total_return)}
-          </value>
+          </span>
         </div>
         <div className="metric-card">
           <label>Annual Return</label>
-          <value className={metrics.annual_return >= 0 ? 'positive' : 'negative'}>
-            {formatPercentage(metrics.annual_return)}
-          </value>
+          <span className={(metrics.annual_return ?? 0) >= 0 ? 'positive' : 'negative'}>
+            {formatPercentage(metrics.annual_return ?? 0)}
+          </span>
         </div>
         <div className="metric-card">
           <label>Sharpe Ratio</label>
-          <value>{metrics.sharpe_ratio?.toFixed(2) || 'N/A'}</value>
+          <span>{metrics.sharpe_ratio?.toFixed(2) || 'N/A'}</span>
         </div>
         <div className="metric-card">
           <label>Sortino Ratio</label>
-          <value>{metrics.sortino_ratio?.toFixed(2) || 'N/A'}</value>
+          <span>{metrics.sortino_ratio?.toFixed(2) || 'N/A'}</span>
         </div>
         <div className="metric-card">
           <label>Calmar Ratio</label>
-          <value>{metrics.calmar_ratio?.toFixed(2) || 'N/A'}</value>
+          <span>{metrics.calmar_ratio?.toFixed(2) || 'N/A'}</span>
         </div>
         <div className="metric-card">
           <label>Max Drawdown</label>
-          <value className="negative">{formatPercentage(metrics.max_drawdown)}</value>
+          <span className="negative">{formatPercentage(metrics.max_drawdown)}</span>
         </div>
         <div className="metric-card">
           <label>Win Rate</label>
-          <value>{formatPercentage(metrics.win_rate)}</value>
+          <span>{formatPercentage(metrics.win_rate)}</span>
         </div>
         <div className="metric-card">
           <label>Profit Factor</label>
-          <value>{metrics.profit_factor?.toFixed(2) || 'N/A'}</value>
+          <span>{metrics.profit_factor?.toFixed(2) || 'N/A'}</span>
         </div>
         <div className="metric-card">
           <label>Total Trades</label>
-          <value>{metrics.total_trades}</value>
+          <span>{metrics.total_trades}</span>
         </div>
         <div className="metric-card">
           <label>Avg Win</label>
-          <value className="positive">{formatCurrency(metrics.avg_win)}</value>
+          <span className="positive">{formatCurrency(metrics.avg_win)}</span>
         </div>
         <div className="metric-card">
           <label>Avg Loss</label>
-          <value className="negative">{formatCurrency(metrics.avg_loss)}</value>
+          <span className="negative">{formatCurrency(metrics.avg_loss)}</span>
         </div>
         <div className="metric-card">
           <label>Expectancy</label>
-          <value className={metrics.expectancy >= 0 ? 'positive' : 'negative'}>
+          <span className={metrics.expectancy >= 0 ? 'positive' : 'negative'}>
             {formatCurrency(metrics.expectancy)}
-          </value>
+          </span>
         </div>
         <div className="metric-card">
           <label>Longest Win Streak</label>
-          <value>{metrics.longest_win_streak}</value>
+          <span>{metrics.longest_win_streak}</span>
         </div>
         <div className="metric-card">
           <label>Longest Loss Streak</label>
-          <value>{metrics.longest_loss_streak}</value>
+          <span>{metrics.longest_loss_streak}</span>
         </div>
       </div>
     </div>

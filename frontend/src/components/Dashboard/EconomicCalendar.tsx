@@ -8,7 +8,7 @@ interface EconomicEvent {
   impact: 'high' | 'medium' | 'low';
 }
 
-export function EconomicCalendar() {
+export function EconomicCalendar({ compact }: { compact?: boolean }) {
   const [events, setEvents] = useState<EconomicEvent[]>([]);
   const [filter, setFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
 

@@ -30,26 +30,29 @@ class ScalpingStrategy(BaseStrategy):
         
         ema = calculate_ema(df, ema_period)
         atr = calculate_atr(df, atr_period)
-        
+
         close = df['close']
         high = df['high']
         low = df['low']
         candle_size = high - low
-        
+
         signals = pd.Series(0, index=df.index)
-        
-        # Buy: price above EMA, bullish candle, sufficient size
+
+        # Candle must have some body — filter noise but avoid spike entries
+        # At least 30% of ATR (real move) and no more than 1.5x ATR (avoid news spikes)
+        valid_candle = (candle_size >= atr * 0.3) & (candle_size <= atr * atr_mult)
+
+        # Buy: price above EMA, bullish candle with valid size
         bullish_candle = close > df['open']
         above_ema = close > ema
-        sufficient_size = candle_size >= (atr * atr_mult)
-        
-        signals[above_ema & bullish_candle & sufficient_size] = 1
-        
-        # Sell: price below EMA, bearish candle, sufficient size
+
+        signals[above_ema & bullish_candle & valid_candle] = 1
+
+        # Sell: price below EMA, bearish candle with valid size
         bearish_candle = close < df['open']
         below_ema = close < ema
-        
-        signals[below_ema & bearish_candle & sufficient_size] = -1
+
+        signals[below_ema & bearish_candle & valid_candle] = -1
         
         return signals
 

@@ -9,7 +9,9 @@ from app.strategies.templates import (
     SupportResistanceStrategy, FibonacciStrategy, RangeTradingStrategy,
     BreakoutStrategy, MeanReversionStrategy, MomentumStrategy, GridTradingStrategy,
     MartingaleStrategy, PivotPointStrategy, TripleScreenStrategy, TurtleStrategy,
-    SessionBreakoutStrategy
+    SessionBreakoutStrategy, AsianRangeBreakoutStrategy, FairValueGapStrategy,
+    VWAPBounceStrategy, EURUSDBreakoutStrategy, TokyoRangeBreakoutStrategy,
+    CommodityMomentumStrategy, NYBreakoutStrategy,
 )
 from app.utils.logger import logger
 
@@ -35,6 +37,13 @@ STRATEGY_REGISTRY = {
     "triple_screen": TripleScreenStrategy,
     "turtle": TurtleStrategy,
     "session_breakout": SessionBreakoutStrategy,
+    "asian_range_breakout": AsianRangeBreakoutStrategy,
+    "fair_value_gap": FairValueGapStrategy,
+    "vwap_bounce": VWAPBounceStrategy,
+    "eur_usd_breakout": EURUSDBreakoutStrategy,
+    "tokyo_range_breakout": TokyoRangeBreakoutStrategy,
+    "commodity_momentum": CommodityMomentumStrategy,
+    "ny_breakout": NYBreakoutStrategy,
 }
 
 

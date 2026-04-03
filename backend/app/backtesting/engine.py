@@ -12,29 +12,36 @@ class StrategyWrapper(bt.Strategy):
     """Wrapper to convert BaseStrategy to Backtrader strategy."""
     
     params = (
-        ('strategy', None),
+        ('base_strategy', None),
         ('stop_loss_pips', None),
         ('take_profit_pips', None),
     )
-    
+
     def __init__(self):
         """Initialize strategy wrapper."""
-        self.strategy = self.params.strategy
+        self.strategy = self.params.base_strategy
         self.signals = []
         self.orders = []
         self.trades = []
-    
+        self.equity_curve = []
+
     def next(self):
         """Called on each bar."""
         if len(self.data) < 2:
             return
-        
+
+        # Track equity on every bar
+        self.equity_curve.append({
+            'timestamp': self.data.datetime.datetime(0).isoformat(),
+            'equity': self.broker.getvalue()
+        })
+
         # Get current data as DataFrame
         df = self._get_dataframe()
-        
+
         if len(df) < 2:
             return
-        
+
         # Generate signal
         signal = self.strategy.on_bar(df, len(df) - 1)
         
@@ -48,16 +55,22 @@ class StrategyWrapper(bt.Strategy):
             self.sell(size=abs(self.position.size))
     
     def _get_dataframe(self) -> pd.DataFrame:
-        """Convert Backtrader data to DataFrame."""
+        """Convert Backtrader data to DataFrame (bars seen so far)."""
+        n = len(self.data)
         data_list = []
-        for i in range(len(self.data)):
+        for i in range(n):
+            ago = -(n - 1 - i)  # from -(n-1) oldest to 0 current
+            try:
+                vol = self.data.volume[ago]
+            except Exception:
+                vol = 0
             data_list.append({
-                'timestamp': self.data.datetime.datetime(i),
-                'open': self.data.open[i],
-                'high': self.data.high[i],
-                'low': self.data.low[i],
-                'close': self.data.close[i],
-                'volume': self.data.volume[i] if hasattr(self.data, 'volume') else 0
+                'timestamp': self.data.datetime.datetime(ago).isoformat(),
+                'open': self.data.open[ago],
+                'high': self.data.high[ago],
+                'low': self.data.low[ago],
+                'close': self.data.close[ago],
+                'volume': vol,
             })
         return pd.DataFrame(data_list)
     
@@ -158,7 +171,7 @@ class BacktestEngine:
             # Add strategy
             cerebro.addstrategy(
                 StrategyWrapper,
-                strategy=self.strategy,
+                base_strategy=self.strategy,
                 stop_loss_pips=None,
                 take_profit_pips=None
             )
@@ -193,22 +206,27 @@ class BacktestEngine:
             trades = result.analyzers.trades.get_analysis()
             returns = result.analyzers.returns.get_analysis()
             
-            # Get strategy wrapper results
-            strategy_wrapper = result.strategies[0]
+            # Get strategy wrapper results (result IS the strategy instance in Backtrader)
+            strategy_wrapper = result
             orders = strategy_wrapper.orders
             trades_list = strategy_wrapper.trades
-            
+
+            # Separate equity values (floats) and timestamps for metrics / frontend
+            equity_dicts = strategy_wrapper.equity_curve  # [{timestamp, equity}, ...]
+            equity_values = [e['equity'] for e in equity_dicts]
+            equity_timestamps = [e['timestamp'] for e in equity_dicts]
+
             # Calculate metrics
             from app.backtesting.metrics import calculate_all_metrics
-            
+
             metrics = calculate_all_metrics(
                 initial_capital=self.initial_capital,
                 final_value=final_value,
                 trades=trades_list,
-                equity_curve=self._get_equity_curve(cerebro),
+                equity_curve=equity_values,
                 returns_data=returns
             )
-            
+
             return {
                 "initial_capital": self.initial_capital,
                 "final_value": final_value,
@@ -216,7 +234,8 @@ class BacktestEngine:
                 "total_trades": len(trades_list),
                 "orders": orders,
                 "trades": trades_list,
-                "equity_curve": self._get_equity_curve(cerebro),
+                "equity_curve": equity_values,
+                "timestamps": equity_timestamps,
                 **metrics
             }
         

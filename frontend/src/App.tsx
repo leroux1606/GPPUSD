@@ -1,200 +1,221 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ErrorBoundary } from './components/Common/ErrorBoundary';
-import { Navbar } from './components/Common/Navbar';
-import { Sidebar } from './components/Common/Sidebar';
-import { PriceTicker } from './components/Dashboard/PriceTicker';
-import { AccountSummary } from './components/Dashboard/AccountSummary';
-import { OpenPositions } from './components/Dashboard/OpenPositions';
-import { MultiChart } from './components/Charts/MultiChart';
+import { TradingChart } from './components/Charts/TradingChart';
 import { IndicatorPanel } from './components/Charts/IndicatorPanel';
+import { MultiChart } from './components/Charts/MultiChart';
+import { SignalPanel } from './components/LiveSignals/SignalPanel';
+import { AIAdvisor } from './components/AIAdvisor/AIAdvisor';
+import { NotificationOverlay, NotificationBell } from './components/Notifications/NotificationOverlay';
+import { NotificationSettings } from './components/Settings/NotificationSettings';
 import { BacktestPanel } from './components/Backtesting/BacktestPanel';
 import { PerformanceMetricsDisplay } from './components/Backtesting/PerformanceMetrics';
 import { EquityCurve } from './components/Backtesting/EquityCurve';
+import { DrawdownChart } from './components/Backtesting/DrawdownChart';
 import { TradeList } from './components/Backtesting/TradeList';
 import { OrderEntry } from './components/Trading/OrderEntry';
-import { PositionManager } from './components/Trading/PositionManager';
-import { TradeHistory } from './components/Trading/TradeHistory';
+import { OpenPositions } from './components/Dashboard/OpenPositions';
 import { QuickTrade } from './components/Trading/QuickTrade';
 import { RiskCalculator } from './components/Trading/RiskCalculator';
+import { PositionManager } from './components/Trading/PositionManager';
+import { TradeHistory } from './components/Trading/TradeHistory';
 import { StrategyList } from './components/Strategy/StrategyList';
 import { StrategyEditor } from './components/Strategy/StrategyEditor';
-import { StrategyBuilder } from './components/Strategy/StrategyBuilder';
-import { StrategyComparison } from './components/Strategy/StrategyComparison';
-import { StrategyExplanation } from './components/Strategy/StrategyExplanation';
-import { ParameterOptimizer } from './components/Strategy/ParameterOptimizer';
 import { AnalyticsDashboard } from './components/Analytics/AnalyticsDashboard';
 import { MonthlyReturns } from './components/Analytics/MonthlyReturns';
 import { TradeDistribution } from './components/Analytics/TradeDistribution';
-import { DrawdownChart } from './components/Backtesting/DrawdownChart';
-import { IndicatorHelp } from './components/Charts/IndicatorHelp';
 import { EconomicCalendar } from './components/Dashboard/EconomicCalendar';
-import { useStrategyStore } from './store';
+import { useDataStore } from './store/dataStore';
 import { useTradingStore } from './store/tradingStore';
+import { useNotificationStore } from './store/notificationStore';
+import { useWebSocket } from './hooks/useWebSocket';
+import { useUIStore, ALL_PAIRS } from './store/uiStore';
 import { BacktestResult } from './types';
 import './App.css';
 
-function Dashboard() {
+type Tab = 'terminal' | 'trade' | 'backtest' | 'strategies' | 'analytics' | 'settings';
+
+// ── Pair selector ─────────────────────────────────────────────────────────────
+function PairSelector() {
+  const { selectedPair, setPair } = useUIStore();
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>GBP/USD Trading Dashboard</h1>
-        <PriceTicker />
-      </header>
-      <main>
-        <div className="dashboard-grid">
-          <div className="dashboard-left">
-            <AccountSummary />
-            <OpenPositions />
-          </div>
-          <div className="dashboard-right">
-            <EconomicCalendar />
-          </div>
-        </div>
-      </main>
+    <div className="pair-selector">
+      {ALL_PAIRS.map((p) => (
+        <button
+          key={p.symbol}
+          className={`pair-btn ${selectedPair === p.symbol ? 'active' : ''}`}
+          onClick={() => setPair(p.symbol)}
+        >
+          {p.display}
+        </button>
+      ))}
     </div>
   );
 }
 
-function Charts() {
-  return (
-    <div className="charts-page">
-      <h2>Price Charts & Technical Analysis</h2>
-      <div className="charts-layout">
-        <div className="main-chart">
-          <MultiChart />
-        </div>
-        <div className="indicator-sidebar">
-          <IndicatorPanel />
-          <IndicatorHelp />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Backtesting() {
-  const [backtestResults, setBacktestResults] = useState<BacktestResult | null>(null);
+// ── Live price bar ─────────────────────────────────────────────────────────────
+function PriceBar() {
+  const { livePrice } = useDataStore();
+  const { marketContext } = useNotificationStore();
+  const { selectedPair } = useUIStore();
+  const pairDisplay = ALL_PAIRS.find((p) => p.symbol === selectedPair)?.display ?? selectedPair;
 
   return (
-    <div className="backtesting-page">
-      <h2>Strategy Backtesting</h2>
-      <BacktestPanel onResultsChange={setBacktestResults} />
-      {backtestResults && (
+    <div className="price-bar">
+      <div className="price-symbol">{pairDisplay}</div>
+      {livePrice ? (
         <>
-          <PerformanceMetricsDisplay metrics={backtestResults} />
-          <div className="backtest-charts">
-            <EquityCurve 
-              equityCurve={backtestResults.equity_curve || []} 
-              timestamps={backtestResults.timestamps}
-            />
-            <DrawdownChart 
-              equityCurve={backtestResults.equity_curve || []}
-              timestamps={backtestResults.timestamps}
-            />
+          <div className="price-bid">
+            <span className="price-label">Bid</span>
+            <span className="price-value">{livePrice.bid?.toFixed(5)}</span>
           </div>
-          <TradeList trades={backtestResults.trades || []} />
+          <div className="price-ask">
+            <span className="price-label">Ask</span>
+            <span className="price-value">{livePrice.ask?.toFixed(5)}</span>
+          </div>
+          <div className="price-spread">
+            <span className="price-label">Spread</span>
+            <span className="price-value">{((livePrice.spread || 0) * 10000).toFixed(1)}p</span>
+          </div>
         </>
+      ) : (
+        <span className="price-connecting">Connecting...</span>
+      )}
+      {marketContext && (
+        <div className="session-badge">{marketContext.session}</div>
       )}
     </div>
   );
 }
 
-function Trading() {
+// ── Status bar ─────────────────────────────────────────────────────────────────
+function StatusBar() {
+  const { balance, equity, getTotalPnL } = useTradingStore();
+  const pnl = getTotalPnL();
+  const { connected } = useWebSocket();
+
   return (
-    <div className="trading-page">
-      <h2>Trading Terminal</h2>
-      <div className="trading-layout">
-        <div className="trading-left">
-          <QuickTrade />
-          <OrderEntry />
-          <RiskCalculator />
+    <div className="status-bar">
+      <div className="status-item">
+        <span className="status-label">Balance</span>
+        <span className="status-value">${balance.toLocaleString('en', { minimumFractionDigits: 2 })}</span>
+      </div>
+      <div className="status-item">
+        <span className="status-label">Equity</span>
+        <span className="status-value">${equity.toLocaleString('en', { minimumFractionDigits: 2 })}</span>
+      </div>
+      <div className="status-item">
+        <span className="status-label">P&L Today</span>
+        <span className={`status-value ${pnl >= 0 ? 'text-green' : 'text-red'}`}>
+          {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)}
+        </span>
+      </div>
+      <div className="status-ws">
+        <span className={`ws-dot ${connected ? 'ws-connected' : 'ws-disconnected'}`} />
+        {connected ? 'Live' : 'Offline'}
+      </div>
+    </div>
+  );
+}
+
+// ── Terminal tab (main trading view) ──────────────────────────────────────────
+function TerminalTab() {
+  const { selectedTimeframe, setTimeframe } = useUIStore();
+  const TIMEFRAMES = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1'];
+
+  return (
+    <div className="terminal-layout">
+      <div className="terminal-chart-area">
+        <div className="chart-toolbar">
+          <div className="tf-buttons">
+            {TIMEFRAMES.map((tf) => (
+              <button
+                key={tf}
+                className={`tf-btn ${selectedTimeframe === tf ? 'active' : ''}`}
+                onClick={() => setTimeframe(tf)}
+              >
+                {tf}
+              </button>
+            ))}
+          </div>
+          <IndicatorPanel compact />
         </div>
-        <div className="trading-right">
-          <OpenPositions />
-          <PositionManager />
-          <TradeHistory />
+        <TradingChart height={480} />
+      </div>
+      <div className="terminal-right-panel">
+        <SignalPanel />
+        <AIAdvisor />
+        <div className="panel eco-mini">
+          <div className="panel-header"><span className="panel-title">Economic Calendar</span></div>
+          <EconomicCalendar compact />
         </div>
       </div>
     </div>
   );
 }
 
-function Strategies() {
-  const { selectedStrategy, strategies } = useStrategyStore();
-  const [view, setView] = useState<'list' | 'builder' | 'comparison' | 'optimizer'>('list');
-
+// ── Trade tab ──────────────────────────────────────────────────────────────────
+function TradeTab() {
   return (
-    <div className="strategies-page">
-      <h2>Trading Strategies</h2>
-      <div className="strategy-tabs">
-        <button 
-          className={view === 'list' ? 'active' : ''} 
-          onClick={() => setView('list')}
-        >
-          📋 Strategy List
-        </button>
-        <button 
-          className={view === 'builder' ? 'active' : ''} 
-          onClick={() => setView('builder')}
-        >
-          🔧 Visual Builder
-        </button>
-        <button 
-          className={view === 'comparison' ? 'active' : ''} 
-          onClick={() => setView('comparison')}
-        >
-          📊 Compare Strategies
-        </button>
-        <button 
-          className={view === 'optimizer' ? 'active' : ''} 
-          onClick={() => setView('optimizer')}
-        >
-          ⚡ Optimize Parameters
-        </button>
+    <div className="trade-layout">
+      <div className="trade-chart">
+        <TradingChart height={400} />
       </div>
-
-      {view === 'list' && (
-        <div className="strategies-layout">
-          <div className="strategies-left">
-            <StrategyList />
-          </div>
-          <div className="strategies-right">
-            {selectedStrategy ? (
-              <>
-                <StrategyEditor />
-                <StrategyExplanation strategyType={selectedStrategy.type} />
-              </>
-            ) : (
-              <div className="no-selection-message">
-                <p>Select a strategy to view details and configure parameters</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {view === 'builder' && <StrategyBuilder />}
-      {view === 'comparison' && <StrategyComparison strategies={strategies} />}
-      {view === 'optimizer' && <ParameterOptimizer strategy={selectedStrategy} />}
+      <div className="trade-panel">
+        <QuickTrade />
+        <OrderEntry />
+        <RiskCalculator />
+      </div>
+      <div className="trade-positions">
+        <OpenPositions />
+        <PositionManager />
+        <TradeHistory />
+      </div>
     </div>
   );
 }
 
-function Analytics() {
+// ── Backtest tab ───────────────────────────────────────────────────────────────
+function BacktestTab() {
+  const [results, setResults] = useState<BacktestResult | null>(null);
+  return (
+    <div className="backtest-layout">
+      <BacktestPanel onResultsChange={setResults} />
+      {results && (
+        <div className="backtest-results">
+          <PerformanceMetricsDisplay metrics={results} />
+          <div className="backtest-charts-row">
+            <EquityCurve equityCurve={results.equity_curve || []} timestamps={results.timestamps} />
+            <DrawdownChart equityCurve={results.equity_curve || []} timestamps={results.timestamps} />
+          </div>
+          <TradeList trades={results.trades || []} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Strategies tab ─────────────────────────────────────────────────────────────
+function StrategiesTab() {
+  return (
+    <div className="strategies-layout">
+      <div className="strategies-left">
+        <StrategyList />
+      </div>
+      <div className="strategies-right">
+        <StrategyEditor />
+      </div>
+    </div>
+  );
+}
+
+// ── Analytics tab ──────────────────────────────────────────────────────────────
+function AnalyticsTab() {
   const { closedTrades, positions } = useTradingStore();
-  
-  // Combine closed trades with closed positions
-  const allTrades = [
-    ...closedTrades,
-    ...positions.filter(p => p.status === 'closed')
-  ];
-
+  const allTrades = [...closedTrades, ...positions.filter((p) => p.status === 'closed')];
   return (
-    <div className="analytics-page">
-      <h2>Performance Analytics</h2>
+    <div className="analytics-layout">
       <AnalyticsDashboard trades={allTrades} />
-      <div className="analytics-charts">
+      <div className="analytics-row">
         <MonthlyReturns trades={allTrades} />
         <TradeDistribution trades={allTrades} />
       </div>
@@ -202,27 +223,62 @@ function Analytics() {
   );
 }
 
+// ── Root App ───────────────────────────────────────────────────────────────────
 function App() {
+  const [tab, setTab] = useState<Tab>('terminal');
+  useWebSocket(); // Init WebSocket at root level
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'terminal', label: 'Terminal' },
+    { id: 'trade', label: 'Trade' },
+    { id: 'backtest', label: 'Backtest' },
+    { id: 'strategies', label: 'Strategies' },
+    { id: 'analytics', label: 'Analytics' },
+    { id: 'settings', label: 'Settings' },
+  ];
+
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <div className="app-container">
-          <Navbar />
-          <div className="main-layout">
-            <Sidebar />
-            <main className="content">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/charts" element={<Charts />} />
-                <Route path="/backtesting" element={<Backtesting />} />
-                <Route path="/trading" element={<Trading />} />
-                <Route path="/strategies" element={<Strategies />} />
-                <Route path="/analytics" element={<Analytics />} />
-              </Routes>
-            </main>
+      <div className="app-root">
+        {/* Top navigation bar */}
+        <header className="topbar">
+          <div className="topbar-left">
+            <span className="app-logo">FX</span>
+            <PairSelector />
+            <nav className="tab-nav">
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  className={`tab-btn ${tab === t.id ? 'active' : ''}`}
+                  onClick={() => setTab(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </nav>
           </div>
-        </div>
-      </BrowserRouter>
+          <div className="topbar-right">
+            <PriceBar />
+            <NotificationBell />
+          </div>
+        </header>
+
+        {/* Main content */}
+        <main className="app-main">
+          {tab === 'terminal' && <TerminalTab />}
+          {tab === 'trade' && <TradeTab />}
+          {tab === 'backtest' && <BacktestTab />}
+          {tab === 'strategies' && <StrategiesTab />}
+          {tab === 'analytics' && <AnalyticsTab />}
+          {tab === 'settings' && <NotificationSettings />}
+        </main>
+
+        {/* Status bar */}
+        <StatusBar />
+
+        {/* Floating notifications */}
+        <NotificationOverlay />
+      </div>
     </ErrorBoundary>
   );
 }

@@ -21,7 +21,7 @@ const DEFAULT_PARAMS: { [key: string]: IndicatorParams } = {
   adx: { period: 14 },
 };
 
-export function IndicatorPanel() {
+export function IndicatorPanel({ compact }: { compact?: boolean }) {
   const { indicators, addIndicator, removeIndicator, historicalData } = useDataStore();
   const { selectedTimeframe } = useUIStore();
   const [selectedIndicator, setSelectedIndicator] = useState<string>('');

@@ -86,7 +86,7 @@ export function OrderEntry() {
         side: form.side,
         size: form.size,
         type: form.orderType,
-        price: form.orderType === 'limit' ? form.limitPrice : undefined,
+        price: form.orderType === 'limit' ? (form.limitPrice ?? undefined) : undefined,
         stop_loss: form.stopLossPips > 0 ? calculations.stopLoss : undefined,
         take_profit: form.takeProfitPips > 0 ? calculations.takeProfit : undefined,
       };

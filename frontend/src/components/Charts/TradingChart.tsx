@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi, CandlestickData, Time } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, CandlestickData, Time, ColorType } from 'lightweight-charts';
 import { useDataStore } from '../../store/dataStore';
 import { useUIStore } from '../../store/uiStore';
 import { useHistoricalData } from '../../hooks/useLiveData';
@@ -30,7 +30,7 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
       width: chartContainerRef.current.clientWidth,
       height: height,
       layout: {
-        background: { type: 'solid', color: '#1e1e1e' },
+        background: { type: ColorType.Solid, color: '#1e1e1e' },
         textColor: '#d1d5db',
       },
       grid: {

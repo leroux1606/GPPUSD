@@ -13,7 +13,7 @@ interface UseLiveDataReturn {
 }
 
 export function useLiveData(): UseLiveDataReturn {
-  const { isConnected, lastPriceUpdate, error: wsError } = useWebSocket();
+  const { connected: isConnected } = useWebSocket();
   const { livePrice, setLivePrice } = useDataStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export function useLiveData(): UseLiveDataReturn {
     price: livePrice,
     isConnected,
     isLoading,
-    error: error || wsError,
+    error: error,
     refetch: fetchPrice,
   };
 }

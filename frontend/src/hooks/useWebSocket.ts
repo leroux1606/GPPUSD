@@ -1,85 +1,107 @@
-import { useState, useEffect, useCallback } from 'react';
-import { wsService, PriceUpdate, PositionUpdate } from '../services/websocket';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useDataStore } from '../store/dataStore';
-import { useTradingStore } from '../store/tradingStore';
+import { useNotificationStore } from '../store/notificationStore';
+import { LiveSignal } from '../types';
 
-interface WebSocketState {
-  isConnected: boolean;
-  connectionState: 'connected' | 'disconnected' | 'reconnecting';
-  lastPriceUpdate: PriceUpdate | null;
-  error: string | null;
-}
+const WS_URL = (import.meta.env.VITE_WS_URL || 'ws://localhost:8000') + '/ws';
 
 export function useWebSocket() {
-  const [state, setState] = useState<WebSocketState>({
-    isConnected: false,
-    connectionState: 'disconnected',
-    lastPriceUpdate: null,
-    error: null,
-  });
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [connected, setConnected] = useState(false);
 
   const setLivePrice = useDataStore((s) => s.setLivePrice);
-  const updatePosition = useTradingStore((s) => s.updatePosition);
+  const { addNotification, addSignal, setMarketContext, setAiCommentary } = useNotificationStore();
 
-  useEffect(() => {
-    // Connect to WebSocket
-    wsService.connect();
+  const connect = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-    // Handle connection state changes
-    const unsubConnection = wsService.on<{ connected: boolean }>('connection', (data) => {
-      setState((prev) => ({
-        ...prev,
-        isConnected: data.connected,
-        connectionState: data.connected ? 'connected' : 'disconnected',
-      }));
-    });
+    const ws = new WebSocket(WS_URL);
+    wsRef.current = ws;
 
-    // Handle price updates
-    const unsubPrice = wsService.on<PriceUpdate>('price_update', (data) => {
-      setState((prev) => ({ ...prev, lastPriceUpdate: data }));
-      // Update the global data store
-      setLivePrice({
-        symbol: data.symbol,
-        timestamp: data.timestamp,
-        bid: data.bid,
-        ask: data.ask,
-        mid: data.mid,
-        spread: data.spread,
-      });
-    });
-
-    // Handle position updates
-    const unsubPosition = wsService.on<PositionUpdate>('position_update', (data) => {
-      updatePosition(data.id, { pnl: data.pnl });
-    });
-
-    // Handle errors
-    const unsubError = wsService.on<Error>('error', (error) => {
-      setState((prev) => ({ ...prev, error: error.message }));
-    });
-
-    // Set initial connection state
-    setState((prev) => ({
-      ...prev,
-      isConnected: wsService.isConnected(),
-      connectionState: wsService.getConnectionState(),
-    }));
-
-    return () => {
-      unsubConnection();
-      unsubPrice();
-      unsubPosition();
-      unsubError();
+    ws.onopen = () => {
+      setConnected(true);
+      if (reconnectTimer.current) {
+        clearTimeout(reconnectTimer.current);
+        reconnectTimer.current = null;
+      }
     };
-  }, [setLivePrice, updatePosition]);
 
-  const reconnect = useCallback(() => {
-    wsService.disconnect();
-    wsService.connect();
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data as string);
+
+        switch (msg.type) {
+          case 'price_update':
+            setLivePrice(msg.data);
+            break;
+
+          case 'signal': {
+            const signal = msg.data as LiveSignal;
+            addSignal(signal);
+            addNotification(
+              'opportunity',
+              `${signal.direction.toUpperCase()} — ${signal.strategy} | Entry ${signal.entry.toFixed(5)} | SL ${signal.stop_loss.toFixed(5)} | TP ${signal.take_profit.toFixed(5)}`,
+              signal
+            );
+            break;
+          }
+
+          case 'warning':
+            addNotification(msg.data.type || 'warning', msg.data.message);
+            break;
+
+          case 'market_context':
+            setMarketContext(msg.data);
+            break;
+
+          case 'ai_commentary':
+            if (msg.data?.text) setAiCommentary(msg.data.text);
+            break;
+
+          default:
+            break;
+        }
+      } catch {
+        // ignore malformed messages
+      }
+    };
+
+    ws.onerror = () => {
+      setConnected(false);
+    };
+
+    ws.onclose = () => {
+      setConnected(false);
+      wsRef.current = null;
+      reconnectTimer.current = setTimeout(connect, 5000);
+    };
+  }, [setLivePrice, addNotification, addSignal, setMarketContext, setAiCommentary]);
+
+  const sendCommand = useCallback((cmd: object) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify(cmd));
+    }
   }, []);
 
-  return {
-    ...state,
-    reconnect,
-  };
+  const requestAiCommentary = useCallback(
+    (context: object) => sendCommand({ cmd: 'get_ai_commentary', context }),
+    [sendCommand]
+  );
+
+  const updateAccount = useCallback(
+    (balance: number, equity: number, positions: unknown[]) =>
+      sendCommand({ cmd: 'update_account', balance, equity, positions }),
+    [sendCommand]
+  );
+
+  useEffect(() => {
+    connect();
+    return () => {
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      wsRef.current?.close();
+    };
+  }, [connect]);
+
+  return { connected, sendCommand, requestAiCommentary, updateAccount };
 }

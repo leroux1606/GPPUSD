@@ -27,42 +27,51 @@ class SessionBreakoutStrategy(BaseStrategy):
         ny_hour = self.params["ny_open_hour"]
         lookback = self.params["lookback"]
         threshold = self.params["breakout_threshold"]
-        
+
         signals = pd.Series(0, index=df.index)
-        
+
         if 'timestamp' not in df.columns:
             return signals
-        
-        df['hour'] = pd.to_datetime(df['timestamp']).dt.hour
-        
+
+        df = df.copy()
+        timestamps = pd.to_datetime(df['timestamp'])
+        df['hour'] = timestamps.dt.hour
+        df['date'] = timestamps.dt.date
+
+        last_london_date = None
+        last_ny_date = None
+
         for i in range(lookback, len(df)):
             current_hour = df.iloc[i]['hour']
-            
-            # London session breakout
-            if current_hour == london_hour:
+            current_date = df.iloc[i]['date']
+
+            # London session — fire only on the first bar at the open hour each day
+            if current_hour == london_hour and current_date != last_london_date:
                 window = df.iloc[i - lookback:i]
                 high = window['high'].max()
                 low = window['low'].min()
                 current_price = df.iloc[i]['close']
-                
-                # Buy breakout above range
+
                 if current_price > high + threshold:
                     signals.iloc[i] = 1
-                # Sell breakdown below range
+                    last_london_date = current_date
                 elif current_price < low - threshold:
                     signals.iloc[i] = -1
-            
-            # NY session breakout
-            elif current_hour == ny_hour:
+                    last_london_date = current_date
+
+            # NY session — fire only on the first bar at the open hour each day
+            elif current_hour == ny_hour and current_date != last_ny_date:
                 window = df.iloc[i - lookback:i]
                 high = window['high'].max()
                 low = window['low'].min()
                 current_price = df.iloc[i]['close']
-                
+
                 if current_price > high + threshold:
                     signals.iloc[i] = 1
+                    last_ny_date = current_date
                 elif current_price < low - threshold:
                     signals.iloc[i] = -1
-        
+                    last_ny_date = current_date
+
         return signals
 

@@ -8,7 +8,7 @@ import uvicorn
 from app.config import settings
 from app.core.database import init_db, check_db_connection
 from app.utils.logger import logger
-from app.api.routes import data, strategies, backtesting, trading, analytics, indicators
+from app.api.routes import data, strategies, backtesting, trading, analytics, indicators, signals
 from app.api.websocket import websocket_endpoint
 
 
@@ -91,6 +91,7 @@ app.include_router(backtesting.router)
 app.include_router(trading.router)
 app.include_router(analytics.router)
 app.include_router(indicators.router)
+app.include_router(signals.router)
 
 # WebSocket endpoint
 app.add_api_route("/ws", websocket_endpoint, methods=["GET"])

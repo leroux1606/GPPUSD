@@ -18,7 +18,7 @@ const NAV_LINKS: NavLink[] = [
 
 export function Navbar() {
   const location = useLocation();
-  const { isConnected, connectionState, reconnect } = useWebSocket();
+  const { connected } = useWebSocket();
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -47,17 +47,10 @@ export function Navbar() {
         ))}
       </div>
       <div className="nav-status">
-        <button
-          className={`connection-indicator ${connectionState}`}
-          onClick={reconnect}
-          title={`Status: ${connectionState}. Click to reconnect.`}
-        >
+        <div className={`connection-indicator ${connected ? 'connected' : 'offline'}`}>
           <span className="status-dot" />
-          <span className="status-text">
-            {connectionState === 'connected' ? 'Live' : 
-             connectionState === 'reconnecting' ? 'Reconnecting...' : 'Offline'}
-          </span>
-        </button>
+          <span className="status-text">{connected ? 'Live' : 'Offline'}</span>
+        </div>
       </div>
     </nav>
   );

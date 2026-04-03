@@ -3,7 +3,7 @@
 from typing import Optional, Dict, List
 from datetime import datetime, timedelta
 import httpx
-from alpha_vantage.forex import Forex
+from alpha_vantage.foreignexchange import ForeignExchange
 from app.config import settings
 from app.utils.logger import logger
 
@@ -19,7 +19,7 @@ class AlphaVantageProvider:
             api_key: Alpha Vantage API key (defaults to settings)
         """
         self.api_key = api_key or settings.ALPHA_VANTAGE_API_KEY
-        self.forex = Forex(key=self.api_key, output_format='pandas')
+        self.forex = ForeignExchange(key=self.api_key, output_format='pandas')
         self.symbol = "GBPUSD"
     
     def get_current_price(self) -> Dict[str, float]:

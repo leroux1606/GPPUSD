@@ -36,18 +36,18 @@ class MomentumStrategy(BaseStrategy):
         
         signals = pd.Series(0, index=df.index)
         
-        # Buy: strong positive momentum, RSI not overbought, strong trend
+        # Buy: strong positive momentum, RSI healthy range, trend confirmed by ADX
         strong_momentum = roc > momentum_threshold
-        rsi_ok = (rsi > 50) & (rsi < 80)
+        rsi_ok = (rsi > 50) & (rsi < 75)
         strong_trend = adx > adx_threshold
-        
+
         signals[strong_momentum & rsi_ok & strong_trend] = 1
-        
-        # Sell: negative momentum, RSI overbought
+
+        # Sell: negative momentum AND trend is fading — requires both conditions
         negative_momentum = roc < -momentum_threshold
-        rsi_overbought = rsi > 80
-        
-        signals[negative_momentum | rsi_overbought] = -1
+        trend_fading = adx < adx_threshold
+
+        signals[negative_momentum & trend_fading] = -1
         
         return signals
 

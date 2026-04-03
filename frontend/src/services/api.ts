@@ -239,11 +239,26 @@ export const indicatorsApi = {
 
 // Health check
 export const healthApi = {
-  check: () => 
+  check: () =>
     api.get('/health'),
-  
+
   status: () =>
     api.get('/api/status'),
+};
+
+// Signals & Settings API
+export const signalsApi = {
+  getSettings: () =>
+    api.get('/api/signals/settings'),
+
+  updateSettings: (data: Record<string, unknown>) =>
+    api.post('/api/signals/settings', data),
+
+  getAiCommentary: (context: Record<string, unknown>) =>
+    api.post('/api/signals/ai-commentary', { context }),
+
+  testTelegram: (message?: string) =>
+    api.post('/api/signals/telegram/test', { message }),
 };
 
 export default api;

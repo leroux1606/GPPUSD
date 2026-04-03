@@ -108,29 +108,29 @@ export function BacktestPanel({ onResultsChange }: BacktestPanelProps) {
           <div className="metrics-grid">
             <div className="metric-card">
               <label>Total Return</label>
-              <value className={results.total_return >= 0 ? 'positive' : 'negative'}>
+              <span className={results.total_return >= 0 ? 'positive' : 'negative'}>
                 {formatPercentage(results.total_return)}
-              </value>
+              </span>
             </div>
             <div className="metric-card">
               <label>Sharpe Ratio</label>
-              <value>{results.sharpe_ratio?.toFixed(2) || 'N/A'}</value>
+              <span>{results.sharpe_ratio?.toFixed(2) || 'N/A'}</span>
             </div>
             <div className="metric-card">
               <label>Max Drawdown</label>
-              <value className="negative">{formatPercentage(results.max_drawdown)}</value>
+              <span className="negative">{formatPercentage(results.max_drawdown)}</span>
             </div>
             <div className="metric-card">
               <label>Win Rate</label>
-              <value>{formatPercentage(results.win_rate)}</value>
+              <span>{formatPercentage(results.win_rate)}</span>
             </div>
             <div className="metric-card">
               <label>Total Trades</label>
-              <value>{results.total_trades}</value>
+              <span>{results.total_trades}</span>
             </div>
             <div className="metric-card">
               <label>Profit Factor</label>
-              <value>{results.profit_factor?.toFixed(2) || 'N/A'}</value>
+              <span>{results.profit_factor?.toFixed(2) || 'N/A'}</span>
             </div>
           </div>
         </div>
