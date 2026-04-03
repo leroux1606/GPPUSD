@@ -259,6 +259,9 @@ export const signalsApi = {
 
   testTelegram: (message?: string) =>
     api.post('/api/signals/telegram/test', { message }),
+
+  testAI: () =>
+    api.post('/api/signals/ai-test', {}),
 };
 
 export default api;

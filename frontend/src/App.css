@@ -597,6 +597,37 @@ html, body, #root {
 .btn-secondary:hover { border-color: var(--green); color: var(--green); }
 .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-sm { padding: 4px 10px; font-size: 11px; }
+
+/* Provider tab selector */
+.provider-tabs {
+  display: flex;
+  gap: 4px;
+}
+.provider-tab {
+  padding: 5px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-panel2);
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.provider-tab:hover { border-color: var(--border-light); color: var(--text-primary); }
+.provider-tab.active {
+  border-color: var(--blue);
+  background: var(--blue-dim);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/* Settings form hint */
+.form-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  display: block;
+}
 .btn-xs { padding: 2px 8px; font-size: 11px; }
 .btn-loading { opacity: 0.6; cursor: wait; }
 

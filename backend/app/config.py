@@ -83,15 +83,28 @@ class Settings(BaseSettings):
         description="Maximum daily loss limit"
     )
     
-    # AI Advisor (OpenRouter)
-    OPENROUTER_API_KEY: str = Field(
+    # AI Advisor — provider selection
+    AI_PROVIDER: str = Field(
+        default="openrouter",
+        description="AI provider: 'openrouter', 'anthropic', or 'openai'"
+    )
+    AI_MODEL: str = Field(
         default="",
-        description="OpenRouter API key for AI commentary"
+        description="Model override (leave blank to use provider default)"
     )
+
+    # OpenRouter
+    OPENROUTER_API_KEY: str = Field(default="", description="OpenRouter API key")
     OPENROUTER_MODEL: str = Field(
-        default="anthropic/claude-3-haiku",
-        description="OpenRouter model to use for AI advice"
+        default="meta-llama/llama-3.1-8b-instruct:free",
+        description="OpenRouter model (legacy, used if AI_MODEL is blank)"
     )
+
+    # Anthropic direct
+    ANTHROPIC_API_KEY: str = Field(default="", description="Anthropic API key (sk-ant-...)")
+
+    # OpenAI direct
+    OPENAI_API_KEY: str = Field(default="", description="OpenAI API key (sk-...)")
 
     # Telegram Notifications
     TELEGRAM_BOT_TOKEN: str = Field(

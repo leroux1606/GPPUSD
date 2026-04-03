@@ -281,8 +281,11 @@ export interface NotificationSettingsData {
   telegram_bot_token?: string;
   telegram_chat_id?: string;
   telegram_min_priority?: string;
+  ai_provider?: string;
+  ai_model?: string;
   openrouter_api_key?: string;
-  openrouter_model?: string;
+  anthropic_api_key?: string;
+  openai_api_key?: string;
   active_strategies?: string;
   signal_scan_interval?: number;
   risk_per_trade_pct?: number;
@@ -292,9 +295,10 @@ export interface SettingsStatus {
   telegram_configured: boolean;
   ai_configured: boolean;
   telegram_chat_id: string;
-  openrouter_model: string;
+  telegram_min_priority: string;
+  ai_provider: string;
+  ai_model: string;
   active_strategies: string;
   signal_scan_interval: number;
   risk_per_trade_pct: number;
-  telegram_min_priority: string;
 }

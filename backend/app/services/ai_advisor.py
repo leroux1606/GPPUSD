@@ -1,4 +1,11 @@
-"""AI trading advisor powered by OpenRouter."""
+"""
+AI trading advisor — supports Anthropic, OpenAI, and OpenRouter.
+
+Provider is selected via settings.AI_PROVIDER:
+  'anthropic'  → Anthropic Messages API (claude-*)
+  'openai'     → OpenAI Chat Completions API (gpt-*)
+  'openrouter' → OpenRouter (any model, including free ones)
+"""
 
 import httpx
 from typing import Optional
@@ -6,7 +13,7 @@ from app.config import settings
 from app.utils.logger import logger
 
 
-SYSTEM_PROMPT = """You are an expert GBP/USD day trader with 20 years of experience.
+SYSTEM_PROMPT = """You are an expert FX day trader with 20 years of experience.
 Your job is to give concise, practical trading advice based on current market conditions.
 Be direct and actionable. Focus on:
 - What the market is doing RIGHT NOW
@@ -16,119 +23,173 @@ Be direct and actionable. Focus on:
 Keep responses under 120 words. Use plain English, no jargon overload."""
 
 
-async def get_market_commentary(context: dict) -> Optional[str]:
+# ── Provider / model resolution ───────────────────────────────────────────────
+
+def _resolve_provider_and_model() -> tuple[str, str, str]:
     """
-    Get AI commentary from OpenRouter based on current market context.
-
-    context keys:
-      price, bid, ask, spread, session, signals, daily_high, daily_low,
-      atr_pips, rsi, trend_ema, indicators_summary
+    Return (provider, model, api_key).
+    Falls back gracefully if the preferred provider has no key configured.
     """
-    if not settings.OPENROUTER_API_KEY:
-        return None
+    provider = settings.AI_PROVIDER.lower().strip()
 
-    price = context.get("price", "N/A")
-    session = context.get("session", "Unknown")
-    signals = context.get("signals", [])
-    signal_text = ", ".join([f"{s['direction'].upper()} ({s['strategy']})" for s in signals]) or "None"
-    daily_high = context.get("daily_high", "N/A")
-    daily_low = context.get("daily_low", "N/A")
-    atr_pips = context.get("atr_pips", "N/A")
-    rsi = context.get("rsi", "N/A")
+    # Explicit model override wins; otherwise use provider-specific defaults
+    if provider == "anthropic":
+        key   = settings.ANTHROPIC_API_KEY
+        model = settings.AI_MODEL or "claude-sonnet-4-6"
+    elif provider == "openai":
+        key   = settings.OPENAI_API_KEY
+        model = settings.AI_MODEL or "gpt-4o-mini"
+    else:  # openrouter (default)
+        key   = settings.OPENROUTER_API_KEY
+        model = settings.AI_MODEL or settings.OPENROUTER_MODEL or "meta-llama/llama-3.1-8b-instruct:free"
+        provider = "openrouter"
 
-    prompt = f"""Current GBP/USD market state:
-- Price: {price}
-- Session: {session}
-- Daily range: {daily_low} – {daily_high}
-- ATR (14): {atr_pips} pips
-- RSI (14): {rsi}
-- Active signals: {signal_text}
+    return provider, model, key
 
-Provide a brief market assessment and any actionable advice."""
 
+def _is_configured() -> bool:
+    provider, _, key = _resolve_provider_and_model()
+    return bool(key)
+
+
+# ── Anthropic Messages API ────────────────────────────────────────────────────
+
+async def _call_anthropic(model: str, api_key: str, prompt: str, max_tokens: int) -> Optional[str]:
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-        "HTTP-Referer": "https://gppusd-trader.local",
-        "X-Title": "GBP/USD Trader",
-        "Content-Type": "application/json",
+        "x-api-key":         api_key,
+        "anthropic-version": "2023-06-01",
+        "Content-Type":      "application/json",
     }
-
     payload = {
-        "model": settings.OPENROUTER_MODEL,
+        "model":      model,
+        "max_tokens": max_tokens,
+        "system":     SYSTEM_PROMPT,
+        "messages":   [{"role": "user", "content": prompt}],
+    }
+    async with httpx.AsyncClient(timeout=25.0) as client:
+        resp = await client.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload)
+    if resp.status_code == 200:
+        return resp.json()["content"][0]["text"].strip()
+    logger.warning(f"Anthropic {resp.status_code}: {resp.text[:200]}")
+    return None
+
+
+# ── OpenAI-compatible API (OpenAI and OpenRouter share the same format) ────────
+
+async def _call_openai_compat(
+    model: str, api_key: str, prompt: str, max_tokens: int,
+    base_url: str = "https://api.openai.com/v1/chat/completions",
+    extra_headers: Optional[dict] = None,
+) -> Optional[str]:
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type":  "application/json",
+        **(extra_headers or {}),
+    }
+    payload = {
+        "model":      model,
+        "max_tokens": max_tokens,
+        "temperature": 0.4,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
+            {"role": "user",   "content": prompt},
         ],
-        "max_tokens": 180,
-        "temperature": 0.4,
     }
+    async with httpx.AsyncClient(timeout=25.0) as client:
+        resp = await client.post(base_url, headers=headers, json=payload)
+    if resp.status_code == 200:
+        return resp.json()["choices"][0]["message"]["content"].strip()
+    logger.warning(f"OpenAI-compat {resp.status_code}: {resp.text[:200]}")
+    return None
+
+
+# ── Dispatcher ────────────────────────────────────────────────────────────────
+
+async def _call_ai(prompt: str, max_tokens: int = 180) -> Optional[str]:
+    provider, model, key = _resolve_provider_and_model()
+
+    if not key:
+        logger.warning(f"AI provider '{provider}' has no API key configured")
+        return None
 
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            resp = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload,
+        if provider == "anthropic":
+            return await _call_anthropic(model, key, prompt, max_tokens)
+        elif provider == "openai":
+            return await _call_openai_compat(model, key, prompt, max_tokens)
+        else:  # openrouter
+            return await _call_openai_compat(
+                model, key, prompt, max_tokens,
+                base_url="https://openrouter.ai/api/v1/chat/completions",
+                extra_headers={
+                    "HTTP-Referer": "https://fx-trader.local",
+                    "X-Title": "FX Trader",
+                },
             )
-            if resp.status_code == 200:
-                data = resp.json()
-                return data["choices"][0]["message"]["content"].strip()
-            else:
-                logger.warning(f"OpenRouter {resp.status_code}: {resp.text[:200]}")
-                return None
     except Exception as e:
-        logger.error(f"AI advisor error: {e}")
+        logger.error(f"AI advisor error ({provider}/{model}): {e}")
         return None
+
+
+# ── Public API ────────────────────────────────────────────────────────────────
+
+async def get_market_commentary(context: dict) -> Optional[str]:
+    """AI market commentary based on current context."""
+    if not _is_configured():
+        return None
+
+    pair    = context.get("display", context.get("pair", "GBP/USD"))
+    price   = context.get("price", "N/A")
+    session = context.get("session", "Unknown")
+    signals = context.get("signals", [])
+    signal_text = ", ".join(
+        f"{s['direction'].upper()} ({s['strategy']})" for s in signals
+    ) or "None"
+
+    prompt = f"""Current {pair} market state:
+- Price: {price}  |  Session: {session}
+- Daily range: {context.get('daily_low','N/A')} – {context.get('daily_high','N/A')}
+- ATR (14): {context.get('atr_pips','N/A')} pips  |  RSI (14): {context.get('rsi','N/A')}
+- Trend: {context.get('trend','N/A')}
+- Active signals: {signal_text}
+
+Provide a brief market assessment and actionable advice."""
+
+    return await _call_ai(prompt, max_tokens=180)
 
 
 async def analyze_trade_setup(signal: dict, context: dict) -> Optional[str]:
-    """Get AI commentary specifically for a trade setup."""
-    if not settings.OPENROUTER_API_KEY:
+    """AI assessment of a specific trade setup."""
+    if not _is_configured():
         return None
 
     direction = signal.get("direction", "buy").upper()
-    strategy = signal.get("strategy", "unknown")
-    entry = signal.get("entry", 0)
-    sl = signal.get("stop_loss", 0)
-    tp = signal.get("take_profit", 0)
-    rr = signal.get("rr_ratio", 0)
+    strategy  = signal.get("strategy", "unknown")
+    entry     = signal.get("entry", 0)
+    sl        = signal.get("stop_loss", 0)
+    tp        = signal.get("take_profit", 0)
+    rr        = signal.get("rr_ratio", 0)
+    pair      = signal.get("pair_display", "GBP/USD")
 
-    prompt = f"""A {direction} signal has been generated by the {strategy} strategy.
-Setup: Entry {entry:.5f} | SL {sl:.5f} | TP {tp:.5f} | R/R 1:{rr:.2f}
+    prompt = f"""{pair} {direction} signal from {strategy}.
+Entry {entry} | SL {sl} | TP {tp} | R/R 1:{rr:.2f}
+RSI={context.get('rsi','N/A')}, Session={context.get('session','N/A')}, \
+Position={context.get('range_position','N/A')}
 
-Current context: RSI={context.get('rsi','N/A')}, Session={context.get('session','N/A')},
-Price position relative to daily range: {context.get('range_position','N/A')}
+In 2-3 sentences: is this setup worth taking? Any caveats?"""
 
-In 2-3 sentences: Is this setup worth taking? Any caveats?"""
+    return await _call_ai(prompt, max_tokens=100)
 
-    headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-        "HTTP-Referer": "https://gppusd-trader.local",
-        "X-Title": "GBP/USD Trader",
-        "Content-Type": "application/json",
-    }
 
-    payload = {
-        "model": settings.OPENROUTER_MODEL,
-        "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-        "max_tokens": 100,
-        "temperature": 0.3,
-    }
-
-    try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            resp = await client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload,
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                return data["choices"][0]["message"]["content"].strip()
-            return None
-    except Exception as e:
-        logger.error(f"Trade analysis error: {e}")
-        return None
+async def test_connection() -> dict:
+    """Quick ping to verify AI connectivity. Returns {ok, provider, model, message}."""
+    provider, model, key = _resolve_provider_and_model()
+    if not key:
+        return {"ok": False, "provider": provider, "model": model,
+                "message": f"No API key for provider '{provider}'"}
+    result = await _call_ai("Reply with exactly: OK", max_tokens=10)
+    if result:
+        return {"ok": True, "provider": provider, "model": model,
+                "message": f"Connected — {provider}/{model}"}
+    return {"ok": False, "provider": provider, "model": model,
+            "message": "Request failed — check API key and model name"}
