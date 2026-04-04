@@ -43,7 +43,7 @@ class Settings(BaseSettings):
         description="Logging level"
     )
     CORS_ORIGINS: str = Field(
-        default="http://localhost:3000,http://localhost:5173",
+        default="http://localhost:3000,http://localhost:3001,http://localhost:5173",
         description="Comma-separated list of allowed CORS origins"
     )
     

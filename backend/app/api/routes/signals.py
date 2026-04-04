@@ -114,7 +114,7 @@ async def test_ai():
 async def test_telegram(body: TelegramTestRequest):
     if not settings.TELEGRAM_BOT_TOKEN or not settings.TELEGRAM_CHAT_ID:
         raise HTTPException(status_code=400, detail="Telegram not configured")
-    success = await send_telegram(body.message, priority="info")
+    success = await send_telegram(body.message, priority="warning")
     if not success:
         raise HTTPException(status_code=502, detail="Failed — check token and chat ID")
     return {"success": True, "message": "Test message sent"}

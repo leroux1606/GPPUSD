@@ -58,11 +58,11 @@ export function NotificationSettings() {
   const [testingAI, setTestingAI] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  useEffect(() => {
+  const loadStatus = () => {
     signalsApi.getSettings().then((r) => {
       const d = r.data as SettingsStatus & { openrouter_api_key?: string; anthropic_api_key?: string; openai_api_key?: string };
       setStatus(d);
-      setForm({
+      setForm((prev) => ({
         telegram_chat_id:      d.telegram_chat_id,
         telegram_min_priority: d.telegram_min_priority,
         ai_provider:           d.ai_provider || 'openrouter',
@@ -70,9 +70,16 @@ export function NotificationSettings() {
         active_strategies:     d.active_strategies,
         signal_scan_interval:  d.signal_scan_interval,
         risk_per_trade_pct:    d.risk_per_trade_pct,
-      });
+        // keep any unsaved key values the user typed
+        telegram_bot_token:    prev.telegram_bot_token,
+        openrouter_api_key:    prev.openrouter_api_key,
+        anthropic_api_key:     prev.anthropic_api_key,
+        openai_api_key:        prev.openai_api_key,
+      }));
     }).catch(() => {});
-  }, []);
+  };
+
+  useEffect(() => { loadStatus(); }, []);
 
   const set = (k: keyof NotificationSettingsData, v: unknown) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -101,8 +108,7 @@ export function NotificationSettings() {
     try {
       await signalsApi.updateSettings(form as Record<string, unknown>);
       setMessage({ type: 'success', text: 'Settings saved. Add keys to .env for permanence.' });
-      const r = await signalsApi.getSettings();
-      setStatus(r.data as SettingsStatus);
+      loadStatus();
     } catch {
       setMessage({ type: 'error', text: 'Failed to save settings.' });
     } finally {
@@ -164,6 +170,16 @@ export function NotificationSettings() {
           </ol>
         </div>
         <div className="form-row">
+          <label>Bot Token</label>
+          <input
+            className="form-input"
+            type="password"
+            onChange={(e) => set('telegram_bot_token', e.target.value)}
+            placeholder="1234567890:ABCdef...  (leave blank to keep existing)"
+            autoComplete="off"
+          />
+        </div>
+        <div className="form-row">
           <label>Chat ID</label>
           <input
             className="form-input"
@@ -188,7 +204,7 @@ export function NotificationSettings() {
         <button
           className="btn-secondary btn-sm"
           onClick={handleTestTelegram}
-          disabled={testing || !status?.telegram_configured}
+          disabled={testing}
         >
           {testing ? 'Sending...' : 'Send Test Message'}
         </button>

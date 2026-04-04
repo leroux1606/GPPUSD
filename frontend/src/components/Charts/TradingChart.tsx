@@ -125,29 +125,36 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     if (!chartReady || !candlestickSeriesRef.current || !volumeSeriesRef.current) return;
     if (!data || data.length === 0) return;
 
-    try {
-      const candleData: CandlestickData[] = data.map((candle) => ({
-        time: (new Date(candle.timestamp).getTime() / 1000) as Time,
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-      }));
+    // Small delay ensures the chart DOM is fully laid out before setting data
+    const timer = setTimeout(() => {
+      try {
+        if (!candlestickSeriesRef.current || !volumeSeriesRef.current) return;
 
-      const volumeData = data.map((candle) => ({
-        time: (new Date(candle.timestamp).getTime() / 1000) as Time,
-        value: candle.volume,
-        color: candle.close >= candle.open ? '#26a69a80' : '#ef535080',
-      }));
+        const candleData: CandlestickData[] = data.map((candle) => ({
+          time: (new Date(candle.timestamp).getTime() / 1000) as Time,
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+        }));
 
-      candlestickSeriesRef.current.setData(candleData);
-      volumeSeriesRef.current.setData(volumeData);
+        const volumeData = data.map((candle) => ({
+          time: (new Date(candle.timestamp).getTime() / 1000) as Time,
+          value: candle.volume,
+          color: candle.close >= candle.open ? '#26a69a80' : '#ef535080',
+        }));
 
-      // Fit content
-      chartRef.current?.timeScale().fitContent();
-    } catch (err) {
-      console.error('Error updating chart data:', err);
-    }
+        candlestickSeriesRef.current.setData(candleData);
+        volumeSeriesRef.current.setData(volumeData);
+
+        // Fit content
+        chartRef.current?.timeScale().fitContent();
+      } catch (err) {
+        console.error('Error updating chart data:', err);
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
   }, [data, chartReady]);
 
   // Update last candle with live price

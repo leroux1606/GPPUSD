@@ -1,13 +1,39 @@
 """Data manager for storing and retrieving price data."""
 
+import asyncio
 import os
 import pandas as pd
 from typing import Optional, List, Dict
 from datetime import datetime, timedelta
 from pathlib import Path
 import redis
+import yfinance as yf
 from app.config import settings
 from app.utils.logger import logger
+
+# OANDA timeframe → yfinance interval
+_OANDA_TO_YF = {
+    "M1": "1m", "M5": "5m", "M15": "15m", "M30": "30m",
+    "H1": "1h", "H4": "1h",  # H4 fetched as 1h then resampled
+    "D": "1d", "W": "1wk",
+}
+# Minutes per bar (used to calculate how many calendar days to request)
+_TF_MINUTES = {
+    "M1": 1, "M5": 5, "M15": 15, "M30": 30,
+    "H1": 60, "H4": 240, "D": 1440, "W": 10080,
+}
+# OANDA pair format → Yahoo Finance ticker
+_PAIR_TO_YF = {
+    "GBP_USD": "GBPUSD=X", "EUR_USD": "EURUSD=X", "USD_JPY": "USDJPY=X",
+    "USD_CHF": "USDCHF=X", "AUD_USD": "AUDUSD=X", "USD_CAD": "USDCAD=X",
+    "NZD_USD": "NZDUSD=X", "EUR_GBP": "EURGBP=X", "EUR_JPY": "EURJPY=X",
+    "GBP_JPY": "GBPJPY=X",
+}
+
+# Module-level cache: key → (fetched_at, DataFrame)
+# Shared across all DataManager instances so even the per-scan-cycle
+# `dm = DataManager()` pattern doesn't cause redundant downloads.
+_DF_CACHE: Dict[str, tuple] = {}
 from app.data.historical import (
     download_historical,
     save_historical_data,
@@ -149,6 +175,146 @@ class DataManager:
         except Exception as e:
             logger.warning(f"Error caching latest price: {e}")
     
+    async def get_historical_async(
+        self,
+        symbol: str = "GBP_USD",
+        timeframe: str = "M15",
+        count: int = 300,
+    ) -> Optional[pd.DataFrame]:
+        """
+        Fetch recent OHLCV bars via Yahoo Finance (no broker account required).
+
+        Results are cached at module level for (tf_minutes - 1) minutes so that
+        multiple DataManager instances created within the same scan cycle share
+        one download instead of hammering the API.
+
+        Args:
+            symbol:    OANDA-format pair, e.g. "GBP_USD"
+            timeframe: OANDA-format timeframe, e.g. "M15"
+            count:     Number of bars to return
+
+        Returns:
+            DataFrame with columns: timestamp, open, high, low, close, volume
+        """
+        yf_interval = _OANDA_TO_YF.get(timeframe, "15m")
+        tf_minutes  = _TF_MINUTES.get(timeframe, 15)
+        yf_symbol   = _PAIR_TO_YF.get(symbol, symbol.replace("_", "") + "=X")
+        cache_key   = f"{symbol}:{timeframe}"
+
+        # Return cached copy if it's younger than tf_minutes - 1 minutes
+        if cache_key in _DF_CACHE:
+            fetched_at, cached_df = _DF_CACHE[cache_key]
+            age_seconds = (datetime.utcnow() - fetched_at).total_seconds()
+            if age_seconds < (tf_minutes - 1) * 60:
+                logger.debug(f"Cache hit {cache_key} ({age_seconds:.0f}s old)")
+                return cached_df.tail(count).reset_index(drop=True)
+
+        # Forex trades ~24 h/day, 5 days/week.  Request enough calendar days.
+        bars_per_day  = (24 * 60) / tf_minutes
+        calendar_days = max(14, int(count / bars_per_day * 1.6) + 7)
+        start         = datetime.utcnow() - timedelta(days=calendar_days)
+
+        loop = asyncio.get_event_loop()
+        df   = await loop.run_in_executor(
+            None, self._fetch_yf, yf_symbol, yf_interval, start
+        )
+
+        if df is None or df.empty:
+            logger.warning(f"No data returned from Yahoo Finance for {symbol} {timeframe}")
+            # Return stale cache if available rather than nothing
+            if cache_key in _DF_CACHE:
+                _, cached_df = _DF_CACHE[cache_key]
+                logger.info(f"Using stale cache for {cache_key}")
+                return cached_df.tail(count).reset_index(drop=True)
+            return None
+
+        # Resample H4 from 1h bars
+        if timeframe == "H4":
+            df = (
+                df.set_index("timestamp")
+                .resample("4h")
+                .agg({"open": "first", "high": "max", "low": "min",
+                      "close": "last", "volume": "sum"})
+                .dropna()
+                .reset_index()
+            )
+
+        _DF_CACHE[cache_key] = (datetime.utcnow(), df)
+        return df.tail(count).reset_index(drop=True)
+
+    def _fetch_yf(self, symbol: str, interval: str, start: datetime) -> Optional[pd.DataFrame]:
+        """
+        Blocking Yahoo Finance download via direct HTTP (v8 chart API).
+        Uses requests with a browser User-Agent to avoid the empty-response
+        issue that affects older yfinance builds.
+        """
+        import requests
+
+        # Map interval to a range that covers the start date
+        days_back = max(1, (datetime.utcnow() - start).days)
+        if   days_back <= 1:  yf_range = "1d"
+        elif days_back <= 5:  yf_range = "5d"
+        elif days_back <= 30: yf_range = "1mo"
+        elif days_back <= 90: yf_range = "3mo"
+        else:                 yf_range = "6mo"
+
+        url = (
+            f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+            f"?interval={interval}&range={yf_range}"
+        )
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "application/json",
+        }
+
+        try:
+            resp = requests.get(url, headers=headers, timeout=15)
+            resp.raise_for_status()
+            data = resp.json()
+
+            result = data.get("chart", {}).get("result")
+            if not result:
+                logger.warning(f"Yahoo Finance: no result for {symbol}")
+                return None
+
+            timestamps = result[0].get("timestamp", [])
+            quote      = result[0].get("indicators", {}).get("quote", [{}])[0]
+            if not timestamps or not quote:
+                return None
+
+            rows = []
+            for i, ts in enumerate(timestamps):
+                o = quote.get("open",  [None])[i]
+                h = quote.get("high",  [None])[i]
+                l = quote.get("low",   [None])[i]
+                c = quote.get("close", [None])[i]
+                v = quote.get("volume",[0])[i]
+                if None in (o, h, l, c):
+                    continue
+                rows.append({
+                    "timestamp": pd.Timestamp(ts, unit="s", tz="UTC").tz_localize(None),
+                    "open":  float(o),
+                    "high":  float(h),
+                    "low":   float(l),
+                    "close": float(c),
+                    "volume": int(v) if v else 0,
+                })
+
+            if not rows:
+                return None
+
+            df = pd.DataFrame(rows)
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            return df.sort_values("timestamp").reset_index(drop=True)
+
+        except Exception as e:
+            logger.error(f"Yahoo Finance fetch error ({symbol} {interval}): {e}")
+            return None
+
     def clear_cache(self, symbol: Optional[str] = None, timeframe: Optional[str] = None) -> None:
         """
         Clear cached data.
