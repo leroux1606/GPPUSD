@@ -185,7 +185,7 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     fetchData(selectedTimeframe);
   }, [selectedTimeframe, fetchData]);
 
-  // Render indicator overlay lines on the chart
+  // Render indicator lines on the chart
   useEffect(() => {
     if (!chartReady || !chartRef.current || !data || data.length === 0) return;
 
@@ -193,41 +193,71 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     const existingSeries = indicatorSeriesRef.current;
 
     // Remove series for indicators that were deleted
-    for (const [name, series] of existingSeries) {
-      if (!indicators[name]) {
+    for (const [key, series] of existingSeries) {
+      const indicatorName = key.split('__')[0];
+      if (!indicators[indicatorName]) {
         chart.removeSeries(series);
-        existingSeries.delete(name);
+        existingSeries.delete(key);
       }
     }
 
-    // Add or update series for current indicators
-    for (const [name, indicator] of Object.entries(indicators)) {
-      if (indicator.type !== 'overlay') continue;
+    // Separate scale colours for non-overlay indicators
+    const MULTI_COLORS: { [key: string]: string[] } = {
+      macd:        ['#2196f3', '#ff9800', '#ef5350'],
+      stochastic:  ['#9c27b0', '#e91e63'],
+      bollinger_bands: ['#e91e6980', '#e91e63', '#e91e6980'],
+      aroon:       ['#4caf50', '#f44336'],
+      dmi:         ['#4caf50', '#f44336'],
+      keltner_channels: ['#00bcd480', '#00bcd4', '#00bcd480'],
+      donchian_channels: ['#ff572280', '#ff5722', '#ff572280'],
+      ichimoku:    ['#26a69a', '#ef5350', '#26a69a80', '#ef535080', '#9ca3af'],
+    };
 
-      const values = indicator.values as (number | null)[];
-      if (!values || values.length === 0) continue;
+    const timestamps = data.map((c) => (new Date(c.timestamp).getTime() / 1000) as Time);
 
-      // Create line series if it doesn't exist yet
-      if (!existingSeries.has(name)) {
-        const lineSeries = chart.addLineSeries({
-          color: indicator.color || '#2196f3',
-          lineWidth: 2,
-          priceLineVisible: false,
-          lastValueVisible: true,
-          crosshairMarkerVisible: true,
-        });
-        existingSeries.set(name, lineSeries);
+    const makeLine = (key: string, color: string, scaleId: string) => {
+      if (existingSeries.has(key)) return existingSeries.get(key)!;
+      const s = chart.addLineSeries({
+        color,
+        lineWidth: 2,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        crosshairMarkerVisible: false,
+        priceScaleId: scaleId,
+      });
+      if (scaleId === 'separate') {
+        s.priceScale().applyOptions({ scaleMargins: { top: 0.7, bottom: 0 } });
       }
+      existingSeries.set(key, s);
+      return s;
+    };
 
-      const series = existingSeries.get(name)!;
-      const lineData = data
-        .map((candle, i) => ({
-          time: (new Date(candle.timestamp).getTime() / 1000) as Time,
-          value: values[i],
-        }))
-        .filter((p) => p.value !== null && p.value !== undefined) as { time: Time; value: number }[];
+    for (const [name, indicator] of Object.entries(indicators)) {
+      const scaleId = indicator.type === 'overlay' ? 'right' : 'separate';
+      const baseColor = indicator.color || '#2196f3';
 
-      series.setData(lineData);
+      if (Array.isArray(indicator.values)) {
+        // Single series (SMA, EMA, RSI, ATR, etc.)
+        const s = makeLine(name, baseColor, scaleId);
+        const pts = timestamps
+          .map((t, i) => ({ time: t, value: (indicator.values as (number | null)[])[i] }))
+          .filter((p) => p.value != null) as { time: Time; value: number }[];
+        s.setData(pts);
+      } else if (typeof indicator.values === 'object') {
+        // Multi-series DataFrame (MACD, Bollinger Bands, Stochastic, etc.)
+        const cols = Object.keys(indicator.values);
+        const palette = MULTI_COLORS[name] || cols.map((_, i) => `hsl(${(i * 60 + 200) % 360},70%,55%)`);
+        cols.forEach((col, i) => {
+          const key = `${name}__${col}`;
+          const color = palette[i] || baseColor;
+          const s = makeLine(key, color, scaleId);
+          const colVals = (indicator.values as { [k: string]: (number | null)[] })[col];
+          const pts = timestamps
+            .map((t, j) => ({ time: t, value: colVals[j] }))
+            .filter((p) => p.value != null) as { time: Time; value: number }[];
+          s.setData(pts);
+        });
+      }
     }
   }, [indicators, data, chartReady]);
 

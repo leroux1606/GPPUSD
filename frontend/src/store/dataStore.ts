@@ -4,7 +4,7 @@ import { PriceData, Candle } from '../types';
 
 interface IndicatorData {
   name: string;
-  values: number[];
+  values: (number | null)[] | { [key: string]: (number | null)[] };
   color?: string;
   type: 'overlay' | 'separate';
 }
