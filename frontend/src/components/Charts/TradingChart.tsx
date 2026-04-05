@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData, Time, ColorType } from 'lightweight-charts';
 import { useDataStore } from '../../store/dataStore';
 import { useUIStore } from '../../store/uiStore';
@@ -16,12 +16,18 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
   const candlestickSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
   const indicatorSeriesRef = useRef<Map<string, ISeriesApi<'Line'>>>(new Map());
+  const indicatorColorsRef = useRef<Map<string, string>>(new Map());
 
-  const { selectedTimeframe } = useUIStore();
-  const { historicalData, livePrice, indicators } = useDataStore();
-  const { data, isLoading, error, fetchData } = useHistoricalData(selectedTimeframe);
+  const { selectedTimeframe, selectedPair } = useUIStore();
+  const { historicalData, livePrice, indicators, clearIndicators } = useDataStore();
+  const { data, isLoading, error, fetchData } = useHistoricalData(selectedTimeframe, selectedPair);
 
   const [chartReady, setChartReady] = useState(false);
+  const [tooltip, setTooltip] = useState<{
+    x: number; y: number;
+    date: string; open: number; high: number; low: number; close: number;
+    indicatorValues: { name: string; color: string; value: string }[];
+  } | null>(null);
 
   // Initialize chart
   useEffect(() => {
@@ -95,6 +101,46 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     chartRef.current = chart;
     candlestickSeriesRef.current = candlestickSeries;
     volumeSeriesRef.current = volumeSeries;
+
+    // Crosshair tooltip
+    chart.subscribeCrosshairMove((param) => {
+      if (!param.time || !param.point || !chartContainerRef.current) {
+        setTooltip(null);
+        return;
+      }
+      const candle = param.seriesData.get(candlestickSeries) as CandlestickData | undefined;
+      if (!candle) { setTooltip(null); return; }
+
+      const date = new Date((param.time as number) * 1000).toLocaleString([], {
+        month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit',
+      });
+
+      // Collect indicator values at this bar
+      const indicatorValues: { name: string; color: string; value: string }[] = [];
+      for (const [key, series] of indicatorSeriesRef.current) {
+        const val = param.seriesData.get(series);
+        if (val && 'value' in val && val.value !== undefined) {
+          const indicatorName = key.split('__')[0].toUpperCase();
+          const col = key.split('__')[1];
+          const label = col ? `${indicatorName} (${col})` : indicatorName;
+          const color = indicatorColorsRef.current.get(key) || '#9ca3af';
+          indicatorValues.push({ name: label, color, value: (val.value as number).toFixed(5) });
+        }
+      }
+
+      const rect = chartContainerRef.current.getBoundingClientRect();
+      setTooltip({
+        x: param.point.x,
+        y: param.point.y,
+        date,
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+        indicatorValues,
+      });
+    });
+
     setChartReady(true);
 
     // Handle resize
@@ -180,10 +226,24 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     }
   }, [livePrice, data, chartReady]);
 
-  // Fetch data when timeframe changes
+  // Fetch data when timeframe or pair changes; clear indicators on pair change
+  const prevPairRef = useRef(selectedPair);
   useEffect(() => {
+    if (prevPairRef.current !== selectedPair) {
+      prevPairRef.current = selectedPair;
+      clearIndicators();
+      // Clear existing indicator series from chart
+      const chart = chartRef.current;
+      if (chart) {
+        for (const series of indicatorSeriesRef.current.values()) {
+          try { chart.removeSeries(series); } catch {}
+        }
+        indicatorSeriesRef.current.clear();
+        indicatorColorsRef.current.clear();
+      }
+    }
     fetchData(selectedTimeframe);
-  }, [selectedTimeframe, fetchData]);
+  }, [selectedTimeframe, selectedPair, fetchData, clearIndicators]);
 
   // Render indicator lines on the chart
   useEffect(() => {
@@ -240,6 +300,7 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
         s.priceScale().applyOptions({ scaleMargins: { top: 0.78, bottom: 0.02 } });
       }
       existingSeries.set(key, s);
+      indicatorColorsRef.current.set(key, color);
       return s;
     };
 
@@ -274,6 +335,12 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
 
   const hasSeparateIndicator = Object.values(indicators).some((ind) => ind.type === 'separate');
 
+  const containerWidth = chartContainerRef.current?.clientWidth ?? 0;
+  const tooltipWidth = 170;
+  const tooltipLeft = tooltip
+    ? (tooltip.x + 14 + tooltipWidth > containerWidth ? tooltip.x - tooltipWidth - 8 : tooltip.x + 14)
+    : 0;
+
   return (
     <div
       className="trading-chart-container"
@@ -281,6 +348,41 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
       data-has-separate={hasSeparateIndicator || undefined}
     >
       <div ref={chartContainerRef} style={{ width: '100%', height }} />
+
+      {tooltip && (
+        <div style={{
+          position: 'absolute',
+          left: tooltipLeft,
+          top: Math.max(4, tooltip.y - 8),
+          background: 'rgba(10,22,40,0.97)',
+          border: '1px solid rgba(0,229,255,0.18)',
+          borderRadius: 6,
+          padding: '7px 10px',
+          pointerEvents: 'none',
+          zIndex: 20,
+          fontSize: 11,
+          fontFamily: 'var(--font-mono, monospace)',
+          minWidth: tooltipWidth,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+          lineHeight: 1.7,
+        }}>
+          <div style={{ color: '#6b7280', marginBottom: 3, fontSize: 10 }}>{tooltip.date}</div>
+          <div style={{ color: '#9ca3af' }}>O: <span style={{ color: '#e2e8f0' }}>{tooltip.open.toFixed(5)}</span></div>
+          <div style={{ color: '#9ca3af' }}>H: <span style={{ color: '#00e676' }}>{tooltip.high.toFixed(5)}</span></div>
+          <div style={{ color: '#9ca3af' }}>L: <span style={{ color: '#ff2d55' }}>{tooltip.low.toFixed(5)}</span></div>
+          <div style={{ color: '#9ca3af' }}>C: <span style={{ color: tooltip.close >= tooltip.open ? '#00e676' : '#ff2d55' }}>{tooltip.close.toFixed(5)}</span></div>
+          {tooltip.indicatorValues.length > 0 && (
+            <div style={{ marginTop: 4, borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 4 }}>
+              {tooltip.indicatorValues.map((iv) => (
+                <div key={iv.name} style={{ color: '#9ca3af' }}>
+                  {iv.name}: <span style={{ color: iv.color }}>{iv.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {isLoading && data.length === 0 && (
         <div className="chart-loading" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <LoadingSpinner message="Loading chart data..." />

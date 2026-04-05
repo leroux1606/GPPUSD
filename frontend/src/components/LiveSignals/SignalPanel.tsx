@@ -1,48 +1,34 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNotificationStore } from '../../store/notificationStore';
 import { useUIStore, ALL_PAIRS } from '../../store/uiStore';
 import { SignalCard } from './SignalCard';
 
 export function SignalPanel() {
   const { signals, marketContext } = useNotificationStore();
-  const { selectedPair } = useUIStore();
-  const [filterPair, setFilterPair] = useState<string>('ALL');
+  const { selectedPair, setPair } = useUIStore();
 
-  const visible = filterPair === 'ALL'
-    ? signals
-    : signals.filter((s) => s.pair === filterPair);
-
-  // Show context for the currently filtered/selected pair
-  const ctx = filterPair !== 'ALL' && marketContext?.pair === filterPair
-    ? marketContext
-    : marketContext?.pair === selectedPair
-    ? marketContext
-    : marketContext;
+  // Always filter by the active pair
+  const visible = signals.filter((s) => s.pair === selectedPair);
+  const ctx = marketContext?.pair === selectedPair ? marketContext : null;
 
   return (
     <div className="panel signal-panel">
       <div className="panel-header">
         <span className="panel-title">Live Signals</span>
-        {signals.length > 0 && (
-          <span className="badge badge-green">{signals.length}</span>
+        {visible.length > 0 && (
+          <span className="badge badge-green">{visible.length}</span>
         )}
       </div>
 
-      {/* Pair filter tabs */}
+      {/* Pair filter tabs — no "All", active pair highlighted */}
       <div className="signal-pair-filter">
-        <button
-          className={`pair-filter-btn ${filterPair === 'ALL' ? 'active' : ''}`}
-          onClick={() => setFilterPair('ALL')}
-        >
-          All
-        </button>
         {ALL_PAIRS.map((p) => {
           const count = signals.filter((s) => s.pair === p.symbol).length;
           return (
             <button
               key={p.symbol}
-              className={`pair-filter-btn ${filterPair === p.symbol ? 'active' : ''}`}
-              onClick={() => setFilterPair(p.symbol)}
+              className={`pair-filter-btn ${selectedPair === p.symbol ? 'active' : ''}`}
+              onClick={() => setPair(p.symbol)}
             >
               {p.display}
               {count > 0 && <span className="pair-count">{count}</span>}

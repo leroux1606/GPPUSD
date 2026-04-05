@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { dataApi } from '../services/api';
 import { useDataStore } from '../store/dataStore';
 import { useWebSocket } from './useWebSocket';
@@ -75,29 +75,20 @@ interface UseHistoricalDataReturn {
   fetchData: (timeframe: string, startDate?: string, endDate?: string) => Promise<void>;
 }
 
-export function useHistoricalData(timeframe: string = '1h'): UseHistoricalDataReturn {
+export function useHistoricalData(timeframe: string = 'M15', pair: string = 'GBP_USD'): UseHistoricalDataReturn {
   const { historicalData, setHistoricalData } = useDataStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const prevPairRef = useRef(pair);
 
   const fetchData = useCallback(
     async (tf: string, startDate?: string, endDate?: string) => {
       setIsLoading(true);
       setError(null);
       try {
-        const params: {
-          symbol?: string;
-          timeframe?: string;
-          start_date?: string;
-          end_date?: string;
-        } = {
-          symbol: 'GBP_USD',
-          timeframe: tf,
-        };
-
+        const params: Record<string, string> = { symbol: pair, timeframe: tf };
         if (startDate) params.start_date = startDate;
         if (endDate) params.end_date = endDate;
-
         const response = await dataApi.getHistorical(params);
         if (response.data?.data) {
           setHistoricalData(tf, response.data.data);
@@ -110,15 +101,17 @@ export function useHistoricalData(timeframe: string = '1h'): UseHistoricalDataRe
         setIsLoading(false);
       }
     },
-    [setHistoricalData]
+    [setHistoricalData, pair]
   );
 
-  // Fetch data on mount and when timeframe changes
+  // Re-fetch whenever pair changes (ignore cache) or when timeframe has no data
   useEffect(() => {
-    if (!historicalData[timeframe] || historicalData[timeframe].length === 0) {
+    const pairChanged = prevPairRef.current !== pair;
+    prevPairRef.current = pair;
+    if (pairChanged || !historicalData[timeframe] || historicalData[timeframe].length === 0) {
       fetchData(timeframe);
     }
-  }, [timeframe, historicalData, fetchData]);
+  }, [timeframe, pair, historicalData, fetchData]);
 
   return {
     data: historicalData[timeframe] || [],
