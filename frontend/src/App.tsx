@@ -58,6 +58,7 @@ function PriceBar() {
   const { marketContext } = useNotificationStore();
   const { selectedPair } = useUIStore();
   const pairDisplay = ALL_PAIRS.find((p) => p.symbol === selectedPair)?.display ?? selectedPair;
+  const marketOpen = livePrice?.market_open !== false; // default true until we know
 
   return (
     <div className="price-bar">
@@ -80,7 +81,10 @@ function PriceBar() {
       ) : (
         <span className="price-connecting">Connecting...</span>
       )}
-      {marketContext && (
+      {!marketOpen && (
+        <div className="market-closed-badge">Market Closed</div>
+      )}
+      {marketOpen && marketContext && (
         <div className="session-badge">{marketContext.session}</div>
       )}
     </div>

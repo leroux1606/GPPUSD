@@ -139,6 +139,16 @@ html, body, #root {
   font-size: 11px;
   font-family: var(--font-sans);
 }
+.market-closed-badge {
+  background: rgba(255,171,0,0.12);
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.02em;
+}
 
 /* ── Status bar ────────────────────────────────────────────────────────── */
 .status-bar {

@@ -2,11 +2,25 @@
 
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd
 from app.data.data_manager import data_manager
 from app.data.live_feed import stream_gbpusd_live
 from app.utils.logger import logger
+
+
+def is_forex_market_open() -> bool:
+    """Forex is open Sun 22:00 UTC – Fri 22:00 UTC."""
+    now = datetime.now(timezone.utc)
+    wd = now.weekday()  # Mon=0 … Sun=6
+    h = now.hour
+    if wd == 5:                  # Saturday — always closed
+        return False
+    if wd == 6 and h < 22:       # Sunday before 22:00 UTC
+        return False
+    if wd == 4 and h >= 22:      # Friday 22:00+ UTC
+        return False
+    return True
 
 router = APIRouter(prefix="/api/data", tags=["data"])
 
@@ -15,10 +29,12 @@ router = APIRouter(prefix="/api/data", tags=["data"])
 async def get_live_price():
     """Get current GBP/USD price via Yahoo Finance (no broker required)."""
     import requests as _requests
-    from datetime import timezone
+
+    market_open = is_forex_market_open()
 
     cached = data_manager.get_latest_price()
     if cached:
+        cached["market_open"] = market_open
         return cached
 
     try:
@@ -41,6 +57,7 @@ async def get_live_price():
             "mid":    mid,
             "spread": round(ask - bid, 5),
             "timestamp": datetime.now(timezone.utc).isoformat(),
+            "market_open": market_open,
         }
         data_manager.cache_latest_price("GBP_USD", price_data)
         return price_data

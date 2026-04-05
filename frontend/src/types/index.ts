@@ -15,6 +15,7 @@ export interface PriceData {
   ask: number;
   mid: number;
   spread: number;
+  market_open?: boolean;
 }
 
 export interface MarketData {
