@@ -215,6 +215,16 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
 
     const timestamps = data.map((c) => (new Date(c.timestamp).getTime() / 1000) as Time);
 
+    // Check if any separate indicators are active
+    const hasSeparate = Object.values(indicators).some((ind) => ind.type === 'separate');
+
+    // Reserve bottom 25% for separate indicators; restore when none active
+    chart.applyOptions({
+      rightPriceScale: {
+        scaleMargins: { top: 0.05, bottom: hasSeparate ? 0.28 : 0.12 },
+      },
+    });
+
     const makeLine = (key: string, color: string, scaleId: string) => {
       if (existingSeries.has(key)) return existingSeries.get(key)!;
       const s = chart.addLineSeries({
@@ -226,7 +236,8 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
         priceScaleId: scaleId,
       });
       if (scaleId === 'separate') {
-        s.priceScale().applyOptions({ scaleMargins: { top: 0.7, bottom: 0 } });
+        // Use bottom 22% with a small gap at bottom for the border
+        s.priceScale().applyOptions({ scaleMargins: { top: 0.78, bottom: 0.02 } });
       }
       existingSeries.set(key, s);
       return s;
@@ -261,8 +272,14 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     }
   }, [indicators, data, chartReady]);
 
+  const hasSeparateIndicator = Object.values(indicators).some((ind) => ind.type === 'separate');
+
   return (
-    <div className="trading-chart-container" style={{ position: 'relative' }}>
+    <div
+      className="trading-chart-container"
+      style={{ position: 'relative' }}
+      data-has-separate={hasSeparateIndicator || undefined}
+    >
       <div ref={chartContainerRef} style={{ width: '100%', height }} />
       {isLoading && data.length === 0 && (
         <div className="chart-loading" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

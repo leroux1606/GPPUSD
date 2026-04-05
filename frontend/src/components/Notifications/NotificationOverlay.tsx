@@ -58,8 +58,10 @@ function Toast({ n, onDismiss }: { n: AppNotification; onDismiss: (id: string) =
 
 export function NotificationOverlay() {
   const { notifications, dismissNotification } = useNotificationStore();
-  // Show only the 5 most recent unread
-  const visible = notifications.filter((n) => !n.read).slice(0, 5);
+  // Only show opportunity/warning/danger as toasts — info goes to bell only. Max 3.
+  const visible = notifications
+    .filter((n) => !n.read && n.type !== 'info')
+    .slice(0, 3);
 
   return (
     <div className="notification-overlay" aria-live="polite">

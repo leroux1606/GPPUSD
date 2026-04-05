@@ -1,0 +1,38 @@
+[     222ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:21550
+[  301487ms] Error: Value is undefined
+    at ensureDefined (http://localhost:3000/node_modules/.vite/deps/lightweight-charts.js?v=33aa3aa2:567:11)
+    at ChartApi.removeSeries (http://localhost:3000/node_modules/.vite/deps/lightweight-charts.js?v=33aa3aa2:12509:20)
+    at http://localhost:3000/src/components/Charts/TradingChart.tsx?t=1775387153958:172:15
+    at commitHookEffectListMount (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:16915:34)
+    at commitPassiveMountOnFiber (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18156:19)
+    at commitPassiveMountEffects_complete (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18129:17)
+    at commitPassiveMountEffects_begin (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18119:15)
+    at commitPassiveMountEffects (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18109:11)
+    at flushPassiveEffectsImpl (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:19490:11)
+    at flushPassiveEffects (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:19447:22)
+[  301492ms] [ERROR] The above error occurred in the <TradingChart> component:
+
+    at TradingChart (http://localhost:3000/src/components/Charts/TradingChart.tsx?t=1775387153958:24:32)
+    at div
+    at div
+    at TerminalTab (http://localhost:3000/src/App.tsx?t=1775387153958:254:47)
+    at main
+    at div
+    at ErrorBoundary (http://localhost:3000/src/components/Common/ErrorBoundary.tsx:7:5)
+    at App (http://localhost:3000/src/App.tsx?t=1775387153958:521:25)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:14031
+[  301493ms] [ERROR] Error caught by boundary: Error: Value is undefined
+    at ensureDefined (http://localhost:3000/node_modules/.vite/deps/lightweight-charts.js?v=33aa3aa2:567:11)
+    at ChartApi.removeSeries (http://localhost:3000/node_modules/.vite/deps/lightweight-charts.js?v=33aa3aa2:12509:20)
+    at http://localhost:3000/src/components/Charts/TradingChart.tsx?t=1775387153958:172:15
+    at commitHookEffectListMount (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:16915:34)
+    at commitPassiveMountOnFiber (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18156:19)
+    at commitPassiveMountEffects_complete (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18129:17)
+    at commitPassiveMountEffects_begin (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18119:15)
+    at commitPassiveMountEffects (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:18109:11)
+    at flushPassiveEffectsImpl (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:19490:11)
+    at flushPassiveEffects (http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:19447:22) {componentStack: 
+    at TradingChart (http://localhost:3000/src/co…ocalhost:3000/src/App.tsx?t=1775387153958:521:25)} @ http://localhost:3000/src/components/Common/ErrorBoundary.tsx:13
+[  301494ms] [WARNING] WebSocket connection to 'ws://localhost:8002/ws' failed: WebSocket is closed before the connection is established. @ http://localhost:3000/src/hooks/useWebSocket.ts?t=1775387153958:79
+[  301494ms] [WARNING] WebSocket connection to 'ws://localhost:8002/ws' failed: WebSocket is closed before the connection is established. @ http://localhost:3000/src/hooks/useWebSocket.ts?t=1775387153958:79

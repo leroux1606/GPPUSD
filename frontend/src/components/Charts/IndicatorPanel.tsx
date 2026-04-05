@@ -97,10 +97,46 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
     return overlayIndicators.includes(indicator) ? 'overlay' : 'separate';
   };
 
+  if (compact) {
+    return (
+      <div className="indicator-panel-compact">
+        <select
+          value={selectedIndicator}
+          onChange={(e) => handleIndicatorSelect(e.target.value)}
+          disabled={loading}
+          className="indicator-select-compact"
+        >
+          <option value="">+ Indicator</option>
+          {INDICATOR_NAMES.map((name) => (
+            <option key={name} value={name} disabled={Object.keys(indicators).includes(name)}>
+              {name.toUpperCase()}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={handleAddIndicator}
+          disabled={loading || !selectedIndicator}
+          className="indicator-add-compact"
+          title="Add indicator"
+        >
+          {loading ? <InlineSpinner size={10} /> : 'Add'}
+        </button>
+        {Object.entries(indicators).map(([name, data]) => (
+          <span key={name} className="indicator-pill" style={{ borderColor: data.color || '#4a6080' }}>
+            <span className="pill-dot" style={{ background: data.color || '#4a6080' }} />
+            {name.toUpperCase()}
+            <button onClick={() => removeIndicator(name)} className="pill-remove">×</button>
+          </span>
+        ))}
+        {error && <span className="indicator-error-compact">{error}</span>}
+      </div>
+    );
+  }
+
   return (
     <div className="indicator-panel">
       <h3>Technical Indicators</h3>
-      
+
       {/* Indicator Selection */}
       <div className="indicator-selector">
         <select
@@ -110,8 +146,8 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
         >
           <option value="">Select Indicator</option>
           {INDICATOR_NAMES.map((name) => (
-            <option 
-              key={name} 
+            <option
+              key={name}
               value={name}
               disabled={Object.keys(indicators).includes(name)}
             >
@@ -122,7 +158,6 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
         </select>
       </div>
 
-      {/* Parameter Inputs */}
       {selectedIndicator && Object.keys(params).length > 0 && (
         <div className="indicator-params">
           <h4>Parameters</h4>
@@ -132,12 +167,7 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
               <input
                 type="number"
                 value={value}
-                onChange={(e) =>
-                  setParams({
-                    ...params,
-                    [key]: parseFloat(e.target.value) || 0,
-                  })
-                }
+                onChange={(e) => setParams({ ...params, [key]: parseFloat(e.target.value) || 0 })}
                 disabled={loading}
               />
             </div>
@@ -145,25 +175,16 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* Error Message */}
       {error && <div className="indicator-error">{error}</div>}
 
-      {/* Add Button */}
       <button
         onClick={handleAddIndicator}
         disabled={loading || !selectedIndicator}
         className="add-indicator-btn"
       >
-        {loading ? (
-          <>
-            <InlineSpinner size={14} /> Calculating...
-          </>
-        ) : (
-          'Add Indicator'
-        )}
+        {loading ? <><InlineSpinner size={14} /> Calculating...</> : 'Add Indicator'}
       </button>
 
-      {/* Active Indicators */}
       <div className="active-indicators">
         <h4>Active Indicators ({Object.keys(indicators).length})</h4>
         {Object.keys(indicators).length === 0 ? (
@@ -172,19 +193,10 @@ export function IndicatorPanel({ compact }: { compact?: boolean }) {
           <ul>
             {Object.entries(indicators).map(([name, data]) => (
               <li key={name}>
-                <span
-                  className="indicator-color"
-                  style={{ backgroundColor: data.color || '#9ca3af' }}
-                />
+                <span className="indicator-color" style={{ backgroundColor: data.color || '#9ca3af' }} />
                 <span className="indicator-name">{name.toUpperCase()}</span>
                 <span className="indicator-type">{data.type}</span>
-                <button
-                  onClick={() => removeIndicator(name)}
-                  className="remove-btn"
-                  title="Remove indicator"
-                >
-                  ×
-                </button>
+                <button onClick={() => removeIndicator(name)} className="remove-btn" title="Remove indicator">×</button>
               </li>
             ))}
           </ul>

@@ -62,10 +62,7 @@ export function EconomicCalendar({ compact }: { compact?: boolean }) {
 
   return (
     <div className="economic-calendar">
-      <h3>Economic Calendar</h3>
-      <p className="description">
-        Upcoming economic events that may impact GBP/USD. High impact events can cause significant volatility.
-      </p>
+      {!compact && <h3>Economic Calendar</h3>}
       <div className="calendar-filters">
         <button 
           className={filter === 'all' ? 'active' : ''}

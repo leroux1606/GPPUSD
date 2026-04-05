@@ -1,0 +1,240 @@
+[     151ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-PJEEZAML.js?v=33aa3aa2:21550
+[    2582ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[    3751ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[    4974ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   10319ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   10536ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   15200ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   18428ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   19444ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   21793ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   26778ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   28730ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   30695ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   34994ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   38721ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   38861ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   42177ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   47697ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   48670ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   49687ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   54308ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   57123ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   59292ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   61672ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   63878ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   67063ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   69369ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   73231ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   74629ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   76895ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   79562ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   83887ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   84454ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   87354ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   91635ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   92530ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   94513ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[   99479ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  101304ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  103036ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  109620ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  110953ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  111364ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  117504ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  117969ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  119273ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  124710ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  125772ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  127099ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  133649ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  135145ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  135943ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  142879ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  143337ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  144752ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  149829ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  152844ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  155034ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  159588ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  160952ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  163165ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  166665ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8002/api/indicators/calculate' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/:0
+[  166666ms] [ERROR] API Error: Network error - please check your connection @ http://localhost:3000/src/services/api.ts:27
+[  166667ms] [ERROR] Error calculating indicator: Error: Network error - please check your connection
+    at http://localhost:3000/src/services/api.ts:32:27
+    at async Axios.request (http://localhost:3000/node_modules/.vite/deps/axios.js?v=33aa3aa2:2326:14)
+    at async handleAddIndicator (http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:61:24)
+    at Axios.request (http://localhost:3000/node_modules/.vite/deps/axios.js?v=33aa3aa2:2330:41)
+    at async handleAddIndicator (http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:61:24) @ http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:79
+[  166668ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8002/api/indicators/calculate:0
+[  167990ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  170272ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  171111ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  175127ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  177451ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  178213ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  180896ms] [ERROR] Access to XMLHttpRequest at 'http://localhost:8002/api/indicators/calculate' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/:0
+[  180897ms] [ERROR] API Error: Network error - please check your connection @ http://localhost:3000/src/services/api.ts:27
+[  180897ms] [ERROR] Error calculating indicator: Error: Network error - please check your connection
+    at http://localhost:3000/src/services/api.ts:32:27
+    at async Axios.request (http://localhost:3000/node_modules/.vite/deps/axios.js?v=33aa3aa2:2326:14)
+    at async handleAddIndicator (http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:61:24)
+    at Axios.request (http://localhost:3000/node_modules/.vite/deps/axios.js?v=33aa3aa2:2330:41)
+    at async handleAddIndicator (http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:61:24) @ http://localhost:3000/src/components/Charts/IndicatorPanel.tsx:79
+[  180898ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:8002/api/indicators/calculate:0
+[  181518ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  186362ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  187579ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  190756ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  192710ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  194138ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  199278ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  199293ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  202721ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  205850ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  207930ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  212341ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  215974ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  216686ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  220295ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  223096ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  226294ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  228974ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  232239ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  234657ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  238176ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  240879ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  243847ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  248069ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  249734ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  251938ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  254815ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  257146ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  259305ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  264608ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  264703ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  269338ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  271825ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  274878ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  275941ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  278480ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  283684ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  284747ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  285178ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  292541ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  293634ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  293920ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  299206ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  300253ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  304034ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  307107ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  310446ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  312315ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  315774ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  318062ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  321297ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  324551ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  325377ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  328186ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  333060ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  334487ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  337886ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  342325ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  344551ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  346487ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  348886ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  353836ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  354332ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  358196ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  362743ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  362887ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  366865ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  371146ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  373086ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  373449ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  380917ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  381422ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  382756ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  388120ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  389138ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  391148ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  395961ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  397834ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  401435ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  404309ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  406684ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  409640ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  412354ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  415577ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  417391ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  422453ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  422575ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  424953ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  428942ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  430435ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  431658ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  438908ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  440144ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  440159ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  447300ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  447889ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  447905ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  455520ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  457178ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  457573ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  462283ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  463972ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  465876ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  471469ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  473033ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  475111ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  481065ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  481223ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  482093ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  487026ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:3000/:0
+[  487026ms] [VERBOSE] [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o @ http://localhost:3000/:0
+[  488810ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  489144ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  495619ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  498774ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  500948ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  504106ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  506270ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  509442ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  511599ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  514790ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  516949ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  520138ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  522295ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  525481ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  527680ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  530886ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  533292ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  536693ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  539835ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  543483ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  549913ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  551673ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  559706ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  561691ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  567813ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  569610ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  577470ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  579660ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  585198ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  586375ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  594595ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  594990ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  603209ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  604529ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  613403ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  614749ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  622889ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error during WebSocket handshake: Unexpected response code: 403 @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  664913ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  666949ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  672324ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  674617ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  679764ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  682511ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
+[  687546ms] [ERROR] WebSocket connection to 'ws://localhost:8002/ws' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/src/hooks/useWebSocket.ts:12
