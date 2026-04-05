@@ -53,3 +53,9 @@ frontend/.next/
 .DS_Store
 Thumbs.db
 
+# Claude Code / tooling
+.claude/
+.playwright-mcp/
+Screenshot*.png
+frontend/package-lock.json
+
