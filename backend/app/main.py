@@ -94,7 +94,7 @@ app.include_router(indicators.router)
 app.include_router(signals.router)
 
 # WebSocket endpoint
-app.add_api_route("/ws", websocket_endpoint, methods=["GET"])
+app.add_api_websocket_route("/ws", websocket_endpoint)
 
 
 if __name__ == "__main__":

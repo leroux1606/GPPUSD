@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createChart, IChartApi, ISeriesApi, CandlestickData, Time, ColorType } from 'lightweight-charts';
 import { useDataStore } from '../../store/dataStore';
 import { useUIStore } from '../../store/uiStore';
@@ -15,11 +15,12 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
-  
+  const indicatorSeriesRef = useRef<Map<string, ISeriesApi<'Line'>>>(new Map());
+
   const { selectedTimeframe } = useUIStore();
-  const { historicalData, livePrice } = useDataStore();
+  const { historicalData, livePrice, indicators } = useDataStore();
   const { data, isLoading, error, fetchData } = useHistoricalData(selectedTimeframe);
-  
+
   const [chartReady, setChartReady] = useState(false);
 
   // Initialize chart
@@ -184,30 +185,64 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
     fetchData(selectedTimeframe);
   }, [selectedTimeframe, fetchData]);
 
-  if (isLoading && data.length === 0) {
-    return (
-      <div className="chart-loading" style={{ height }}>
-        <LoadingSpinner message="Loading chart data..." />
-      </div>
-    );
-  }
+  // Render indicator overlay lines on the chart
+  useEffect(() => {
+    if (!chartReady || !chartRef.current || !data || data.length === 0) return;
 
-  if (error && data.length === 0) {
-    return (
-      <div className="chart-error" style={{ height }}>
-        <p>Error loading chart: {error}</p>
-        <button onClick={() => fetchData(selectedTimeframe)}>Retry</button>
-      </div>
-    );
-  }
+    const chart = chartRef.current;
+    const existingSeries = indicatorSeriesRef.current;
+
+    // Remove series for indicators that were deleted
+    for (const [name, series] of existingSeries) {
+      if (!indicators[name]) {
+        chart.removeSeries(series);
+        existingSeries.delete(name);
+      }
+    }
+
+    // Add or update series for current indicators
+    for (const [name, indicator] of Object.entries(indicators)) {
+      if (indicator.type !== 'overlay') continue;
+
+      const values = indicator.values as (number | null)[];
+      if (!values || values.length === 0) continue;
+
+      // Create line series if it doesn't exist yet
+      if (!existingSeries.has(name)) {
+        const lineSeries = chart.addLineSeries({
+          color: indicator.color || '#2196f3',
+          lineWidth: 2,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          crosshairMarkerVisible: true,
+        });
+        existingSeries.set(name, lineSeries);
+      }
+
+      const series = existingSeries.get(name)!;
+      const lineData = data
+        .map((candle, i) => ({
+          time: (new Date(candle.timestamp).getTime() / 1000) as Time,
+          value: values[i],
+        }))
+        .filter((p) => p.value !== null && p.value !== undefined) as { time: Time; value: number }[];
+
+      series.setData(lineData);
+    }
+  }, [indicators, data, chartReady]);
 
   return (
-    <div className="trading-chart-container">
+    <div className="trading-chart-container" style={{ position: 'relative' }}>
       <div ref={chartContainerRef} style={{ width: '100%', height }} />
-      {data.length === 0 && !isLoading && (
-        <div className="chart-no-data">
-          <p>No data available for this timeframe</p>
-          <button onClick={() => fetchData(selectedTimeframe)}>Load Data</button>
+      {isLoading && data.length === 0 && (
+        <div className="chart-loading" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <LoadingSpinner message="Loading chart data..." />
+        </div>
+      )}
+      {error && data.length === 0 && !isLoading && (
+        <div className="chart-error" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <p>Error loading chart: {error}</p>
+          <button onClick={() => fetchData(selectedTimeframe)}>Retry</button>
         </div>
       )}
     </div>

@@ -3,7 +3,7 @@ import { useDataStore } from '../store/dataStore';
 import { useNotificationStore } from '../store/notificationStore';
 import { LiveSignal } from '../types';
 
-const WS_URL = (import.meta.env.VITE_WS_URL || 'ws://localhost:8000') + '/ws';
+const WS_URL = (import.meta.env.VITE_WS_URL || 'ws://localhost:8002') + '/ws';
 
 export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);

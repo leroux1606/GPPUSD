@@ -37,18 +37,29 @@ async def calculate_indicator(request: Dict[str, Any] = Body(...)):
         # Calculate indicator
         indicator_func = INDICATORS[indicator_name]
         result = indicator_func(df, **params)
-        
+
+        import math
+
+        def clean(v):
+            """Convert NaN/Inf to None so JSON serialization doesn't fail."""
+            if v is None:
+                return None
+            try:
+                return None if math.isnan(v) or math.isinf(v) else v
+            except (TypeError, ValueError):
+                return v
+
         # Convert to list format
         if isinstance(result, pd.Series):
             return {
                 "indicator": indicator_name,
-                "values": result.tolist(),
+                "values": [clean(v) for v in result.tolist()],
                 "type": "series"
             }
         elif isinstance(result, pd.DataFrame):
             return {
                 "indicator": indicator_name,
-                "values": result.to_dict('list'),
+                "values": {col: [clean(v) for v in vals] for col, vals in result.to_dict('list').items()},
                 "type": "dataframe"
             }
         else:
