@@ -12,6 +12,8 @@ from app.strategies.templates import (
     SessionBreakoutStrategy, AsianRangeBreakoutStrategy, FairValueGapStrategy,
     VWAPBounceStrategy, EURUSDBreakoutStrategy, TokyoRangeBreakoutStrategy,
     CommodityMomentumStrategy, NYBreakoutStrategy,
+    OrderBlockStrategy, LiquiditySweepStrategy, OpeningRangeBreakoutStrategy,
+    SqueezeMomentumStrategy, KeltnerPullbackStrategy,
 )
 from app.utils.logger import logger
 
@@ -44,6 +46,11 @@ STRATEGY_REGISTRY = {
     "tokyo_range_breakout": TokyoRangeBreakoutStrategy,
     "commodity_momentum": CommodityMomentumStrategy,
     "ny_breakout": NYBreakoutStrategy,
+    "order_block": OrderBlockStrategy,
+    "liquidity_sweep": LiquiditySweepStrategy,
+    "opening_range_breakout": OpeningRangeBreakoutStrategy,
+    "squeeze_momentum": SqueezeMomentumStrategy,
+    "keltner_pullback": KeltnerPullbackStrategy,
 }
 
 

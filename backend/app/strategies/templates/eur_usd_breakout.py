@@ -31,7 +31,8 @@ class EURUSDBreakoutStrategy(BaseStrategy):
             "range_end_hour": 7,        # GMT — range complete at Frankfurt open
             "london_open_hour": 7,      # GMT — start trading
             "london_end_hour": 10,      # GMT — stop taking new entries
-            "buffer": 0.0002,           # ~2 pips (EUR/USD is tighter than GBP/USD)
+            "buffer_pips": 2,           # pips (auto-scaled per pair)
+            "min_range_pips": 3,        # skip day if pre-range below this
             "max_range_atr_mult": 1.8,
             "atr_period": 14,
         }
@@ -51,7 +52,9 @@ class EURUSDBreakoutStrategy(BaseStrategy):
         range_end = self.params["range_end_hour"]
         london_open = self.params["london_open_hour"]
         london_end = self.params["london_end_hour"]
-        buffer = self.params["buffer"]
+        pip = self.pip_size(df)
+        buffer = self.params["buffer_pips"] * pip
+        min_range = self.params["min_range_pips"] * pip
         max_mult = self.params["max_range_atr_mult"]
 
         def in_range_hours(h):
@@ -84,7 +87,7 @@ class EURUSDBreakoutStrategy(BaseStrategy):
             rng_size = rng_high - rng_low
 
             cur_atr = float(atr.iloc[i]) if not pd.isna(atr.iloc[i]) else 0.001
-            if cur_atr == 0 or rng_size > cur_atr * max_mult or rng_size < 0.0003:
+            if cur_atr == 0 or rng_size > cur_atr * max_mult or rng_size < min_range:
                 continue
 
             close = row["close"]

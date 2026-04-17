@@ -25,7 +25,6 @@
     "react-plotly.js": "^2.6.0",
     "zustand": "^4.4.7",
     "axios": "^1.6.2",
-    "socket.io-client": "^4.6.0",
     "@tanstack/react-table": "^8.10.7",
     "react-grid-layout": "^1.4.4",
     "react-resizable": "^3.0.5",

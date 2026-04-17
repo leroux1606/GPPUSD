@@ -26,6 +26,11 @@ from app.strategies.templates.eur_usd_breakout import EURUSDBreakoutStrategy
 from app.strategies.templates.tokyo_range_breakout import TokyoRangeBreakoutStrategy
 from app.strategies.templates.commodity_momentum import CommodityMomentumStrategy
 from app.strategies.templates.ny_breakout import NYBreakoutStrategy
+from app.strategies.templates.order_block import OrderBlockStrategy
+from app.strategies.templates.liquidity_sweep import LiquiditySweepStrategy
+from app.strategies.templates.opening_range_breakout import OpeningRangeBreakoutStrategy
+from app.strategies.templates.squeeze_momentum import SqueezeMomentumStrategy
+from app.strategies.templates.keltner_pullback import KeltnerPullbackStrategy
 
 __all__ = [
     "MACrossoverStrategy",
@@ -54,4 +59,9 @@ __all__ = [
     "TokyoRangeBreakoutStrategy",
     "CommodityMomentumStrategy",
     "NYBreakoutStrategy",
+    "OrderBlockStrategy",
+    "LiquiditySweepStrategy",
+    "OpeningRangeBreakoutStrategy",
+    "SqueezeMomentumStrategy",
+    "KeltnerPullbackStrategy",
 ]

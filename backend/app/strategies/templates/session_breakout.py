@@ -19,14 +19,14 @@ class SessionBreakoutStrategy(BaseStrategy):
             "london_open_hour": 8,  # GMT
             "ny_open_hour": 13,  # GMT
             "lookback": 30,  # Minutes
-            "breakout_threshold": 0.0005
+            "breakout_threshold_pips": 5   # pips (auto-scaled per pair)
         }
     
     def generate_signals(self, df: pd.DataFrame) -> pd.Series:
         london_hour = self.params["london_open_hour"]
         ny_hour = self.params["ny_open_hour"]
         lookback = self.params["lookback"]
-        threshold = self.params["breakout_threshold"]
+        threshold = self.params["breakout_threshold_pips"] * self.pip_size(df)
 
         signals = pd.Series(0, index=df.index)
 

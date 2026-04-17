@@ -90,6 +90,19 @@ class BaseStrategy(ABC):
             "description": self.__doc__ or "No description available"
         }
     
+    @staticmethod
+    def pip_size(df: pd.DataFrame) -> float:
+        """Infer pip size from the magnitude of the latest close.
+
+        Standard FX pairs (EUR/USD, GBP/USD, AUD/USD, …) trade near 1.x ⇒ 0.0001/pip.
+        JPY pairs (USD/JPY, EUR/JPY, …) trade near 100+ ⇒ 0.01/pip.
+        """
+        try:
+            px = float(df["close"].dropna().iloc[-1])
+        except Exception:
+            return 0.0001
+        return 0.01 if px >= 20 else 0.0001
+
     def backtest_prepare(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Prepare data for backtesting (calculate indicators, etc.).

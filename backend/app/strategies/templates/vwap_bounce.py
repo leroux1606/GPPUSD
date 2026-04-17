@@ -38,7 +38,7 @@ class VWAPBounceStrategy(BaseStrategy):
             "session_start_hour": 13,  # London/NY overlap (GMT)
             "session_end_hour": 17,
             "atr_period": 14,
-            "min_deviation_pips": 0.0003,  # Price must be at least 3 pips away from VWAP
+            "min_deviation_pips": 3,   # minimum distance from VWAP in pips (auto-scaled per pair)
         }
 
     def _calculate_daily_vwap(self, df: pd.DataFrame) -> pd.Series:
@@ -79,7 +79,7 @@ class VWAPBounceStrategy(BaseStrategy):
 
         rsi_oversold = self.params["rsi_oversold"]
         rsi_overbought = self.params["rsi_overbought"]
-        min_dev = self.params["min_deviation_pips"]
+        min_dev = self.params["min_deviation_pips"] * self.pip_size(df)
         session_start = self.params["session_start_hour"]
         session_end = self.params["session_end_hour"]
 

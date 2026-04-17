@@ -18,14 +18,14 @@ class SupportResistanceStrategy(BaseStrategy):
     def get_default_params(self) -> Dict[str, Any]:
         return {
             "lookback": 50,
-            "tolerance": 0.002,  # 0.2% tolerance for level matching
-            "bounce_threshold": 0.0005  # Minimum bounce distance
+            "tolerance": 0.002,  # 0.2% tolerance for level matching (fractional, pair-agnostic)
+            "bounce_threshold_pips": 5   # minimum bounce distance in pips (auto-scaled per pair)
         }
     
     def generate_signals(self, df: pd.DataFrame) -> pd.Series:
         lookback = self.params["lookback"]
         tolerance = self.params["tolerance"]
-        bounce_threshold = self.params["bounce_threshold"]
+        bounce_threshold = self.params["bounce_threshold_pips"] * self.pip_size(df)
         
         signals = pd.Series(0, index=df.index)
         

@@ -138,6 +138,24 @@ class Settings(BaseSettings):
         description="Default % of balance to risk per trade"
     )
 
+    # News Blackout — skip entries near high-impact events
+    NEWS_BLACKOUT_ENABLED: bool = Field(
+        default=True,
+        description="Enable news blackout window around high-impact events"
+    )
+    NEWS_BLACKOUT_MINUTES_BEFORE: int = Field(
+        default=15,
+        description="Minutes before a scheduled event to start the blackout"
+    )
+    NEWS_BLACKOUT_MINUTES_AFTER: int = Field(
+        default=15,
+        description="Minutes after a scheduled event to end the blackout"
+    )
+    NEWS_CALENDAR_PATH: str = Field(
+        default="config/news_calendar.json",
+        description="Path to the static high-impact news calendar (JSON)"
+    )
+
     # API Settings
     API_V1_PREFIX: str = "/api/v1"
     

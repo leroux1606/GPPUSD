@@ -30,7 +30,8 @@ class AsianRangeBreakoutStrategy(BaseStrategy):
             "asian_start_hour": 22,    # GMT — Asia/Sydney open
             "asian_end_hour": 7,       # GMT — London open
             "london_end_hour": 10,     # GMT — stop trading after London morning
-            "buffer": 0.0003,          # ~3 pips above/below range for confirmed break
+            "buffer_pips": 3,          # pips above/below range for confirmed break
+            "min_range_pips": 5,       # skip day if Asian range below this (holiday/gap)
             "max_range_atr_mult": 2.0, # Skip day if Asian range > 2x ATR (avoid chaotic days)
             "atr_period": 14,
         }
@@ -50,7 +51,9 @@ class AsianRangeBreakoutStrategy(BaseStrategy):
         asian_start = self.params["asian_start_hour"]
         asian_end = self.params["asian_end_hour"]
         london_end = self.params["london_end_hour"]
-        buffer = self.params["buffer"]
+        pip = self.pip_size(df)
+        buffer = self.params["buffer_pips"] * pip
+        min_range = self.params["min_range_pips"] * pip
         max_range_mult = self.params["max_range_atr_mult"]
 
         # Build Asian range per calendar date
@@ -97,8 +100,8 @@ class AsianRangeBreakoutStrategy(BaseStrategy):
                 continue
             if asian_range > current_atr * max_range_mult:
                 continue
-            # Also skip if range is tiny (< 5 pips) — likely weekend/holiday gap
-            if asian_range < 0.0005:
+            # Also skip if range is tiny — likely weekend/holiday gap
+            if asian_range < min_range:
                 continue
 
             close = row['close']

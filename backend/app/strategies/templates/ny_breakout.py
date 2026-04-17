@@ -33,7 +33,8 @@ class NYBreakoutStrategy(BaseStrategy):
             "range_end_hour": 13,       # GMT — range complete at NY open
             "ny_open_hour": 13,         # GMT — start trading
             "ny_end_hour": 15,          # GMT — stop taking entries
-            "buffer": 0.0003,           # ~3 pips
+            "buffer_pips": 3,           # pips (auto-scaled per pair)
+            "min_range_pips": 5,        # skip day if pre-range below this
             "max_range_atr_mult": 2.0,
             "atr_period": 14,
         }
@@ -53,7 +54,9 @@ class NYBreakoutStrategy(BaseStrategy):
         range_end = self.params["range_end_hour"]
         ny_open = self.params["ny_open_hour"]
         ny_end = self.params["ny_end_hour"]
-        buffer = self.params["buffer"]
+        pip = self.pip_size(df)
+        buffer = self.params["buffer_pips"] * pip
+        min_range = self.params["min_range_pips"] * pip
         max_mult = self.params["max_range_atr_mult"]
 
         df["in_pre_range"] = (df["hour"] >= range_start) & (df["hour"] < range_end)
@@ -80,7 +83,7 @@ class NYBreakoutStrategy(BaseStrategy):
             rng_size = rng_high - rng_low
 
             cur_atr = float(atr.iloc[i]) if not pd.isna(atr.iloc[i]) else 0.001
-            if cur_atr == 0 or rng_size > cur_atr * max_mult or rng_size < 0.0005:
+            if cur_atr == 0 or rng_size > cur_atr * max_mult or rng_size < min_range:
                 continue
 
             close = row["close"]

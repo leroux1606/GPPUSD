@@ -31,7 +31,7 @@ class FairValueGapStrategy(BaseStrategy):
 
     def get_default_params(self) -> Dict[str, Any]:
         return {
-            "min_gap_pips": 0.0003,      # Minimum FVG size (~3 pips) — ignore noise
+            "min_gap_pips": 3,           # Minimum FVG size in pips (auto-scaled per pair)
             "fvg_fill_pct": 0.5,         # Enter when price fills 50% into the gap
             "trend_ema_period": 50,      # EMA for trend direction filter
             "atr_period": 14,
@@ -46,7 +46,7 @@ class FairValueGapStrategy(BaseStrategy):
         if len(df) < 3:
             return signals
 
-        min_gap = self.params["min_gap_pips"]
+        min_gap = self.params["min_gap_pips"] * self.pip_size(df)
         fill_pct = self.params["fvg_fill_pct"]
         trend_ema = calculate_ema(df, self.params["trend_ema_period"])
         session_filter = self.params["session_filter"]

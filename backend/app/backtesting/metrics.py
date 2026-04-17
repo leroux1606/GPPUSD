@@ -11,7 +11,8 @@ def calculate_all_metrics(
     final_value: float,
     trades: List[Dict[str, Any]],
     equity_curve: List[float],
-    returns_data: Dict[str, Any]
+    returns_data: Dict[str, Any],
+    bars_per_year: int = 252,
 ) -> Dict[str, Any]:
     """
     Calculate all performance metrics.
@@ -30,9 +31,11 @@ def calculate_all_metrics(
     
     # Returns
     metrics["total_return"] = (final_value - initial_capital) / initial_capital * 100
-    metrics["annual_return"] = calculate_annual_return(initial_capital, final_value, len(equity_curve))
+    metrics["annual_return"] = calculate_annual_return(
+        initial_capital, final_value, len(equity_curve), bars_per_year
+    )
     metrics["monthly_returns"] = calculate_monthly_returns(trades, equity_curve)
-    
+
     # Risk metrics
     if equity_curve:
         metrics["max_drawdown"] = calculate_max_drawdown(equity_curve)
@@ -40,9 +43,13 @@ def calculate_all_metrics(
     else:
         metrics["max_drawdown"] = 0
         metrics["avg_drawdown"] = 0
-    
-    metrics["sharpe_ratio"] = calculate_sharpe_ratio(trades, equity_curve)
-    metrics["sortino_ratio"] = calculate_sortino_ratio(trades, equity_curve)
+
+    metrics["sharpe_ratio"] = calculate_sharpe_ratio(
+        trades, equity_curve, initial_capital=initial_capital, bars_per_year=bars_per_year
+    )
+    metrics["sortino_ratio"] = calculate_sortino_ratio(
+        trades, equity_curve, initial_capital=initial_capital, bars_per_year=bars_per_year
+    )
     metrics["calmar_ratio"] = calculate_calmar_ratio(metrics["annual_return"], metrics["max_drawdown"])
     
     # Trade statistics
@@ -82,17 +89,23 @@ def calculate_all_metrics(
     return metrics
 
 
-def calculate_annual_return(initial_capital: float, final_value: float, num_bars: int) -> float:
-    """Calculate annualized return."""
-    if num_bars == 0:
+def calculate_annual_return(
+    initial_capital: float,
+    final_value: float,
+    num_bars: int,
+    bars_per_year: int = 252,
+) -> float:
+    """Calculate annualized return. `bars_per_year` depends on timeframe (M15≈26000)."""
+    if num_bars == 0 or bars_per_year == 0:
         return 0
-    
-    # Assume daily bars (252 trading days per year)
-    years = num_bars / 252
-    if years == 0:
+
+    years = num_bars / bars_per_year
+    if years <= 0:
         return 0
-    
+
     total_return = (final_value - initial_capital) / initial_capital
+    if 1 + total_return <= 0:
+        return -100.0
     annual_return = ((1 + total_return) ** (1 / years) - 1) * 100
     return annual_return
 
@@ -126,50 +139,79 @@ def calculate_avg_drawdown(equity_curve: List[float]) -> float:
     return abs(np.mean(drawdown)) if len(drawdown) > 0 else 0
 
 
-def calculate_sharpe_ratio(trades: List[Dict], equity_curve: List[float], risk_free_rate: float = 0.02) -> float:
-    """Calculate Sharpe ratio."""
-    if not trades or len(trades) < 2:
-        return 0
-    
-    returns = [t.get("pnl", 0) / 10000 for t in trades]  # Normalize
-    
-    if len(returns) < 2:
-        return 0
-    
-    mean_return = np.mean(returns)
-    std_return = np.std(returns)
-    
-    if std_return == 0:
-        return 0
-    
-    # Annualize
-    sharpe = (mean_return - risk_free_rate / 252) / std_return * np.sqrt(252)
-    return sharpe
+def _bar_returns_from_equity(equity_curve: List[float]) -> np.ndarray:
+    """Bar-to-bar returns from the equity curve (best proxy when bars are fixed-duration)."""
+    if not equity_curve or len(equity_curve) < 2:
+        return np.array([])
+    eq = np.asarray(equity_curve, dtype=float)
+    prev = eq[:-1]
+    # guard against division-by-zero / negative equity
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = np.where(prev > 0, (eq[1:] - prev) / prev, 0.0)
+    return r[np.isfinite(r)]
 
 
-def calculate_sortino_ratio(trades: List[Dict], equity_curve: List[float], risk_free_rate: float = 0.02) -> float:
-    """Calculate Sortino ratio."""
+def calculate_sharpe_ratio(
+    trades: List[Dict],
+    equity_curve: List[float],
+    risk_free_rate: float = 0.02,
+    initial_capital: float = 10000.0,
+    bars_per_year: int = 252,
+) -> float:
+    """Annualised Sharpe. Uses equity-curve returns when available (more accurate),
+    falls back to trade P&L normalised by initial_capital otherwise."""
+    returns = _bar_returns_from_equity(equity_curve)
+    if returns.size >= 2:
+        # per-bar returns → annualise with bars_per_year
+        mean_r = float(np.mean(returns))
+        std_r  = float(np.std(returns, ddof=1))
+        if std_r == 0:
+            return 0.0
+        return (mean_r - risk_free_rate / bars_per_year) / std_r * np.sqrt(bars_per_year)
+
     if not trades or len(trades) < 2:
-        return 0
-    
-    returns = [t.get("pnl", 0) / 10000 for t in trades]
-    
-    if len(returns) < 2:
-        return 0
-    
-    mean_return = np.mean(returns)
-    downside_returns = [r for r in returns if r < 0]
-    
-    if len(downside_returns) == 0:
-        return float('inf') if mean_return > risk_free_rate / 252 else 0
-    
-    downside_std = np.std(downside_returns)
-    
-    if downside_std == 0:
-        return 0
-    
-    sortino = (mean_return - risk_free_rate / 252) / downside_std * np.sqrt(252)
-    return sortino
+        return 0.0
+    cap = initial_capital if initial_capital > 0 else 10000.0
+    r = np.array([t.get("pnl", 0) / cap for t in trades], dtype=float)
+    mean_r = float(np.mean(r))
+    std_r  = float(np.std(r, ddof=1))
+    if std_r == 0:
+        return 0.0
+    # Trades-per-year unknown → use 252 as neutral convention
+    return (mean_r - risk_free_rate / 252) / std_r * np.sqrt(252)
+
+
+def calculate_sortino_ratio(
+    trades: List[Dict],
+    equity_curve: List[float],
+    risk_free_rate: float = 0.02,
+    initial_capital: float = 10000.0,
+    bars_per_year: int = 252,
+) -> float:
+    """Annualised Sortino. Same logic as Sharpe but using downside deviation."""
+    returns = _bar_returns_from_equity(equity_curve)
+    if returns.size >= 2:
+        mean_r = float(np.mean(returns))
+        downside = returns[returns < 0]
+        if downside.size == 0:
+            return float("inf") if mean_r > 0 else 0.0
+        dstd = float(np.std(downside, ddof=1)) if downside.size > 1 else 0.0
+        if dstd == 0:
+            return 0.0
+        return (mean_r - risk_free_rate / bars_per_year) / dstd * np.sqrt(bars_per_year)
+
+    if not trades or len(trades) < 2:
+        return 0.0
+    cap = initial_capital if initial_capital > 0 else 10000.0
+    r = np.array([t.get("pnl", 0) / cap for t in trades], dtype=float)
+    mean_r = float(np.mean(r))
+    downside = r[r < 0]
+    if downside.size == 0:
+        return float("inf") if mean_r > 0 else 0.0
+    dstd = float(np.std(downside, ddof=1)) if downside.size > 1 else 0.0
+    if dstd == 0:
+        return 0.0
+    return (mean_r - risk_free_rate / 252) / dstd * np.sqrt(252)
 
 
 def calculate_calmar_ratio(annual_return: float, max_drawdown: float) -> float:

@@ -22,6 +22,8 @@ from app.config import settings
 from app.strategies.strategy_builder import StrategyBuilder, STRATEGY_REGISTRY
 from app.strategies.pair_config import PAIR_CONFIG, get_pair
 from app.technical_analysis.indicators import calculate_atr, calculate_rsi, calculate_ema
+from app.services.regime_detector import detect_regime, strategy_allowed
+from app.services.news_calendar import is_in_blackout
 from app.utils.logger import logger
 
 # Minimum confidence to emit a signal (0-100)
@@ -45,11 +47,9 @@ def _get_session(hour_utc: int) -> str:
 
 
 def _session_bonus(session: str, pair_config: dict) -> int:
-    """Return +15 if current session is a prime session for this pair, else 0."""
-    for ps in pair_config.get("prime_sessions", []):
-        if session in ps or ps in session:
-            return 15
-    return 0
+    """Return +14 if current session is a prime session for this pair, else 0."""
+    prime = pair_config.get("prime_sessions", [])
+    return 14 if session in prime else 0
 
 
 # ── Trade-level computation ───────────────────────────────────────────────────
@@ -279,14 +279,16 @@ def _compute_confidence(
     session_bonus: int,
 ) -> int:
     """
-    Combine three signals into a 0-100 confidence score.
-    - Base: win_rate × 60  (0–60 pts; default 30 when no history)
-    - Confluence: +20 per extra agreeing strategy (beyond the first), capped at +30
-    - Session alignment: +15 when in a prime session for the pair
+    Combine three signals into a 0-99 confidence score.
+    - Base: win_rate × 55  (0–55 pts; default 27 when no history)
+    - Confluence: +15 per extra agreeing strategy (beyond the first), capped at +30
+    - Session alignment: +14 when in a prime session for the pair
+    Max achievable: 55 + 30 + 14 = 99.
     """
-    base = round((win_rate if win_rate is not None else 0.5) * 60)
-    conf_bonus = min(30, (confluence_count - 1) * 20)
-    total = min(95, base + conf_bonus + session_bonus)
+    base = round((win_rate if win_rate is not None else 0.5) * 55)
+    conf_bonus = min(30, max(0, confluence_count - 1) * 15)
+    sess = min(14, max(0, session_bonus))
+    total = max(0, min(99, base + conf_bonus + sess))
     return total
 
 
@@ -364,12 +366,37 @@ class SignalEngine:
             pair_cfg    = PAIR_CONFIG[pair_symbol]
             sess_bonus  = _session_bonus(session_now, pair_cfg)
 
+            # ── detect market regime ──────────────────────────────────────
+            regime = detect_regime(df)
+
+            # ── news blackout: if a high-impact event is imminent, skip ──
+            in_blackout, news_label = is_in_blackout(pair_symbol)
+            if in_blackout:
+                logger.info(f"{pair_symbol} — news blackout ({news_label}); skipping entries")
+                await self.broadcast({
+                    "type": "warning",
+                    "data": {"type": "info",
+                             "message": f"{pair_cfg['display']} — news blackout: {news_label}"},
+                })
+                # Still broadcast market context so the UI updates
+                context = build_market_context(df, pair_symbol, [])
+                context["regime"] = regime.regime
+                context["regime_desc"] = regime.description
+                context["news_blackout"] = news_label
+                await self.broadcast({"type": "market_context", "data": context})
+                continue
+
             # ── collect raw signals from each recommended strategy ────────
             raw_buy:  List[dict] = []   # strategies firing BUY this bar
             raw_sell: List[dict] = []   # strategies firing SELL this bar
 
             for name in pair_cfg["recommended_strategies"]:
                 if name not in STRATEGY_REGISTRY:
+                    continue
+
+                # Regime filter — skip strategies whose playbook doesn't fit
+                if not strategy_allowed(name, regime.regime):
+                    logger.debug(f"{pair_symbol} {name}: filtered by regime={regime.regime}")
                     continue
 
                 key = f"{pair_symbol}:{name}"
@@ -483,6 +510,9 @@ class SignalEngine:
 
             # ── market context ────────────────────────────────────────────
             context = build_market_context(df, pair_symbol, pair_signals)
+            context["regime"] = regime.regime
+            context["regime_desc"] = regime.description
+            context["news_blackout"] = None
             await self.broadcast({"type": "market_context", "data": context})
 
     # ── helper ───────────────────────────────────────────────────────────────

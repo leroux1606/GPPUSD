@@ -216,15 +216,17 @@ class BacktestEngine:
             equity_values = [e['equity'] for e in equity_dicts]
             equity_timestamps = [e['timestamp'] for e in equity_dicts]
 
-            # Calculate metrics
+            # Calculate metrics — annualise correctly using the bar duration
             from app.backtesting.metrics import calculate_all_metrics
+            bars_per_year = self._infer_bars_per_year()
 
             metrics = calculate_all_metrics(
                 initial_capital=self.initial_capital,
                 final_value=final_value,
                 trades=trades_list,
                 equity_curve=equity_values,
-                returns_data=returns
+                returns_data=returns,
+                bars_per_year=bars_per_year,
             )
 
             return {
@@ -243,9 +245,23 @@ class BacktestEngine:
             logger.error(f"Backtest error: {e}")
             raise
     
+    def _infer_bars_per_year(self) -> int:
+        """Infer bars/year from the median timestamp delta of input data.
+        Forex trades ~24h x 5d ≈ 252 days/year of activity."""
+        try:
+            idx = self.data.index
+            if len(idx) < 3:
+                return 252
+            deltas = pd.Series(idx[1:]) - pd.Series(idx[:-1])
+            median_sec = float(deltas.median().total_seconds())
+            if median_sec <= 0:
+                return 252
+            minutes_per_year = 252 * 24 * 60  # active forex minutes
+            return max(1, int(minutes_per_year / (median_sec / 60)))
+        except Exception:
+            return 252
+
     def _get_equity_curve(self, cerebro) -> list:
         """Extract equity curve from cerebro."""
-        # This would need to be implemented by tracking equity over time
-        # For now, return empty list
         return []
 
