@@ -124,7 +124,7 @@ async def download_historical_data(
     timeframe: str = Query(default="1h"),
     start_date: Optional[str] = Query(default=None),
     end_date: Optional[str] = Query(default=None),
-    provider: str = Query(default="oanda")
+    provider: str = Query(default="yahoo")
 ):
     """Download and cache historical data."""
     try:

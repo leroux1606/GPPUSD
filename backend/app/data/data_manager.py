@@ -11,7 +11,7 @@ import yfinance as yf
 from app.config import settings
 from app.utils.logger import logger
 
-# OANDA timeframe → yfinance interval
+# Internal timeframe → yfinance interval
 _OANDA_TO_YF = {
     "M1": "1m", "M5": "5m", "M15": "15m", "M30": "30m",
     "H1": "1h", "H4": "1h",  # H4 fetched as 1h then resampled
@@ -22,7 +22,7 @@ _TF_MINUTES = {
     "M1": 1, "M5": 5, "M15": 15, "M30": 30,
     "H1": 60, "H4": 240, "D": 1440, "W": 10080,
 }
-# OANDA pair format → Yahoo Finance ticker
+# Internal pair format → Yahoo Finance ticker
 _PAIR_TO_YF = {
     "GBP_USD": "GBPUSD=X", "EUR_USD": "EURUSD=X", "USD_JPY": "USDJPY=X",
     "USD_CHF": "USDCHF=X", "AUD_USD": "AUDUSD=X", "USD_CAD": "USDCAD=X",

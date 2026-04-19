@@ -57,10 +57,10 @@ Professional day trading system for GBP/USD with live data, backtesting, technic
 ## Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
+- Podman & podman-compose (or Docker & Docker Compose)
 - Python 3.11+ (for local development)
 - Node.js 20+ (for local development)
-- OANDA API account (for live data)
+- No broker API key required — live data uses Yahoo Finance by default
 
 ### Installation
 
@@ -76,9 +76,9 @@ cp backend/.env.example backend/.env
 # Edit backend/.env with your API keys
 ```
 
-3. Start with Docker:
+3. Start with Podman:
 ```bash
-docker-compose up -d
+podman-compose up -d
 ```
 
 4. Access application:

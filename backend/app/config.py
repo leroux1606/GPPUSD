@@ -20,14 +20,6 @@ class Settings(BaseSettings):
     )
     
     # Data Providers
-    OANDA_API_KEY: str = Field(
-        default="",
-        description="OANDA API key for live data"
-    )
-    OANDA_ACCOUNT_ID: str = Field(
-        default="",
-        description="OANDA account ID"
-    )
     ALPHA_VANTAGE_API_KEY: str = Field(
         default="",
         description="Alpha Vantage API key (backup data provider)"
@@ -167,13 +159,6 @@ class Settings(BaseSettings):
             raise ValueError(f"LOG_LEVEL must be one of {valid_levels}")
         return v.upper()
 
-    @field_validator("OANDA_API_KEY", "OANDA_ACCOUNT_ID")
-    @classmethod
-    def validate_oanda_credentials(cls, v: str) -> str:
-        if os.getenv("APP_ENV") == "production" and not v:
-            raise ValueError("OANDA credentials are required in production")
-        return v
-    
     @property
     def cors_origins_list(self) -> List[str]:
         """Get CORS origins as a list."""

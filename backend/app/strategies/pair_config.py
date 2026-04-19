@@ -17,7 +17,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    10.0,     # $ per pip per standard lot (approx)
         "typical_spread":   1.5,      # pips
         "typical_daily_atr": 80,      # pips
-        "oanda_symbol":     "GBP_USD",
         "yahoo_symbol":     "GBPUSD=X",
         "prime_sessions":   ["London", "London/NY Overlap"],
         "avoid_sessions":   ["Asian"],  # thin liquidity
@@ -41,7 +40,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    10.0,
         "typical_spread":   0.8,
         "typical_daily_atr": 70,
-        "oanda_symbol":     "EUR_USD",
         "yahoo_symbol":     "EURUSD=X",
         "prime_sessions":   ["London", "London/NY Overlap"],
         "avoid_sessions":   [],
@@ -64,7 +62,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    9.0,      # approx at 150 rate
         "typical_spread":   0.8,
         "typical_daily_atr": 70,
-        "oanda_symbol":     "USD_JPY",
         "yahoo_symbol":     "USDJPY=X",
         "prime_sessions":   ["Asian", "London/NY Overlap", "NY"],
         "avoid_sessions":   [],
@@ -87,7 +84,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    11.0,     # approx, USD quoted, CHF base
         "typical_spread":   1.5,
         "typical_daily_atr": 65,
-        "oanda_symbol":     "USD_CHF",
         "yahoo_symbol":     "USDCHF=X",
         "prime_sessions":   ["London", "London/NY Overlap"],
         "avoid_sessions":   ["Asian"],
@@ -109,7 +105,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    10.0,
         "typical_spread":   1.2,
         "typical_daily_atr": 65,
-        "oanda_symbol":     "AUD_USD",
         "yahoo_symbol":     "AUDUSD=X",
         "prime_sessions":   ["Asian", "London/NY Overlap"],
         "avoid_sessions":   [],
@@ -131,7 +126,6 @@ PAIR_CONFIG: Dict[str, Dict[str, Any]] = {
         "pip_value_usd":    7.5,      # approx, varies with USDCAD rate
         "typical_spread":   1.5,
         "typical_daily_atr": 65,
-        "oanda_symbol":     "USD_CAD",
         "yahoo_symbol":     "USDCAD=X",
         "prime_sessions":   ["NY", "London/NY Overlap"],
         "avoid_sessions":   ["Asian"],

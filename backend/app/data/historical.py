@@ -5,7 +5,6 @@ import pandas as pd
 from typing import Optional, List, Dict
 from datetime import datetime, timedelta
 from pathlib import Path
-from app.data.providers.oanda import oanda_provider
 from app.data.providers.alpha_vantage import alpha_vantage_provider
 from app.data.providers.yahoo_finance import yahoo_finance_provider
 from app.utils.logger import logger
@@ -27,7 +26,7 @@ async def download_historical(
     timeframe: str = "1h",
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
-    provider: str = "oanda"
+    provider: str = "yahoo"
 ) -> pd.DataFrame:
     """
     Download historical OHLCV data from specified provider.
@@ -37,7 +36,7 @@ async def download_historical(
         timeframe: Timeframe (1m, 5m, 15m, 1h, 4h, 1d)
         start_date: Start date (defaults to 1 year ago)
         end_date: End date (defaults to now)
-        provider: Data provider (oanda, alpha_vantage, yahoo)
+        provider: Data provider (alpha_vantage, yahoo)
     
     Returns:
         DataFrame with columns: timestamp, open, high, low, close, volume
@@ -50,26 +49,17 @@ async def download_historical(
         
         # Try providers in order of preference
         providers = []
-        if provider == "oanda" and oanda_provider:
-            providers.append(("oanda", oanda_provider))
         if provider == "alpha_vantage" and alpha_vantage_provider:
             providers.append(("alpha_vantage", alpha_vantage_provider))
-        if provider == "yahoo" or not providers:
+        if not providers:
             providers.append(("yahoo", yahoo_finance_provider))
-        
+
         candles = []
         last_error = None
-        
+
         for prov_name, prov in providers:
             try:
-                if prov_name == "oanda":
-                    oanda_timeframe = TIMEFRAME_MAP.get(timeframe, "H1")
-                    candles = prov.get_historical_data(
-                        timeframe=oanda_timeframe,
-                        start_date=start_date,
-                        end_date=end_date
-                    )
-                elif prov_name == "alpha_vantage":
+                if prov_name == "alpha_vantage":
                     av_timeframe = timeframe.replace("m", "min").replace("h", "min")
                     candles = prov.get_historical_data(
                         timeframe=av_timeframe,

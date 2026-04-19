@@ -3,31 +3,27 @@
 import asyncio
 from typing import AsyncGenerator, Dict, Optional
 from datetime import datetime
-from app.data.providers.oanda import oanda_provider
 from app.data.providers.alpha_vantage import alpha_vantage_provider
 from app.data.providers.yahoo_finance import yahoo_finance_provider
 from app.utils.logger import logger
 
 
 async def stream_gbpusd_live(
-    provider: str = "oanda",
+    provider: str = "yahoo",
     update_interval: float = 1.0
 ) -> AsyncGenerator[Dict, None]:
     """
     Stream live GBP/USD prices.
-    
+
     Args:
-        provider: Data provider (oanda, alpha_vantage, yahoo)
+        provider: Data provider (alpha_vantage, yahoo)
         update_interval: Update interval in seconds (default: 1.0)
-    
+
     Yields:
         Dictionary with price data: {symbol, timestamp, bid, ask, mid, spread}
     """
     providers = []
-    
-    # Setup provider
-    if provider == "oanda" and oanda_provider:
-        providers.append(("oanda", oanda_provider))
+
     if provider == "alpha_vantage" and alpha_vantage_provider:
         providers.append(("alpha_vantage", alpha_vantage_provider))
     if not providers:
@@ -38,13 +34,7 @@ async def stream_gbpusd_live(
     
     for name, prov in providers:
         try:
-            # Test connection
-            if name == "oanda":
-                prov.get_current_price()
-            elif name == "alpha_vantage":
-                prov.get_current_price()
-            else:
-                prov.get_current_price()
+            prov.get_current_price()
             
             current_provider = prov
             provider_name = name
@@ -63,28 +53,16 @@ async def stream_gbpusd_live(
     
     while True:
         try:
-            if provider_name == "oanda" and hasattr(current_provider, 'stream_live_prices'):
-                async for price_data in current_provider.stream_live_prices():
-                    yield {
-                        "symbol": "GBP_USD",
-                        "timestamp": price_data.get("timestamp", datetime.utcnow().isoformat()),
-                        "bid": price_data["bid"],
-                        "ask": price_data["ask"],
-                        "mid": price_data["mid"],
-                        "spread": price_data["spread"]
-                    }
-            else:
-                # Poll-based streaming for other providers
-                price_data = current_provider.get_current_price()
-                yield {
-                    "symbol": "GBP_USD",
-                    "timestamp": price_data.get("timestamp", datetime.utcnow().isoformat()),
-                    "bid": price_data["bid"],
-                    "ask": price_data["ask"],
-                    "mid": price_data["mid"],
-                    "spread": price_data["spread"]
-                }
-                await asyncio.sleep(update_interval)
+            price_data = current_provider.get_current_price()
+            yield {
+                "symbol": "GBP_USD",
+                "timestamp": price_data.get("timestamp", datetime.utcnow().isoformat()),
+                "bid": price_data["bid"],
+                "ask": price_data["ask"],
+                "mid": price_data["mid"],
+                "spread": price_data["spread"]
+            }
+            await asyncio.sleep(update_interval)
             
             consecutive_errors = 0  # Reset error counter on success
         
