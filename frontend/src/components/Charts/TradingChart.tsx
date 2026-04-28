@@ -70,6 +70,18 @@ export function TradingChart({ height = 500, showCrosshair = true }: TradingChar
         borderColor: '#3b3b4d',
         timeVisible: true,
         secondsVisible: false,
+        tickMarkFormatter: (time: number, tickMarkType: number) => {
+          const d = new Date(time * 1000);
+          const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          const mon = MONTHS[d.getUTCMonth()];
+          const day = d.getUTCDate();
+          const hh = d.getUTCHours().toString().padStart(2, '0');
+          const mm = d.getUTCMinutes().toString().padStart(2, '0');
+          if (tickMarkType === 0) return String(d.getUTCFullYear());
+          if (tickMarkType === 1) return `${mon} ${d.getUTCFullYear()}`;
+          if (tickMarkType === 2) return `${mon} ${day}`;
+          return `${hh}:${mm}`;
+        },
       },
     });
 

@@ -125,9 +125,37 @@ function StatusBar() {
 function TerminalTab() {
   const { selectedTimeframe, setTimeframe } = useUIStore();
   const TIMEFRAMES = ['M1', 'M5', 'M15', 'M30', 'H1', 'H4', 'D1'];
+  const [rightWidth, setRightWidth] = React.useState(320);
+  const isDragging = React.useRef(false);
+  const dragStart = React.useRef({ x: 0, width: 0 });
+
+  React.useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      const delta = dragStart.current.x - e.clientX;
+      setRightWidth(Math.max(200, Math.min(520, dragStart.current.width + delta)));
+    };
+    const onUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    return () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+  }, []);
+
+  const onHandleDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    dragStart.current = { x: e.clientX, width: rightWidth };
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   return (
-    <div className="terminal-layout">
+    <div className="terminal-layout" style={{ gridTemplateColumns: `1fr ${rightWidth}px` }}>
       <div className="terminal-chart-area">
         <div className="chart-toolbar">
           <div className="tf-buttons">
@@ -146,6 +174,7 @@ function TerminalTab() {
         <TradingChart height={480} />
       </div>
       <div className="terminal-right-panel">
+        <div className="terminal-resize-handle" onMouseDown={onHandleDown} />
         <SignalPanel />
         <AIAdvisor />
         <div className="panel eco-mini">

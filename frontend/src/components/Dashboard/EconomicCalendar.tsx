@@ -60,6 +60,11 @@ export function EconomicCalendar({ compact }: { compact?: boolean }) {
     }
   };
 
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+  };
+
   return (
     <div className="economic-calendar">
       {!compact && <h3>Economic Calendar</h3>}
@@ -96,9 +101,8 @@ export function EconomicCalendar({ compact }: { compact?: boolean }) {
           <table>
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Currency</th>
+                <th style={{ whiteSpace: 'nowrap' }}>When</th>
+                <th>Ccy</th>
                 <th>Event</th>
                 <th>Impact</th>
               </tr>
@@ -106,12 +110,14 @@ export function EconomicCalendar({ compact }: { compact?: boolean }) {
             <tbody>
               {filteredEvents.map((event, index) => (
                 <tr key={index}>
-                  <td>{event.date}</td>
-                  <td>{event.time}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    <div>{formatDate(event.date)}</div>
+                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{event.time}</div>
+                  </td>
                   <td>{event.currency}</td>
                   <td>{event.event}</td>
                   <td>
-                    <span 
+                    <span
                       className="impact-badge"
                       style={{ backgroundColor: getImpactColor(event.impact) }}
                     >
